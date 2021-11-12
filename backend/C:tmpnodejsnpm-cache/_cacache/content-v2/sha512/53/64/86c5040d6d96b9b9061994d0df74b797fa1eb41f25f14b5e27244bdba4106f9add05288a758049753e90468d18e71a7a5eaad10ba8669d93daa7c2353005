@@ -1,0 +1,1 @@
+{"name":"cb","dist-tags":{"latest":"0.1.0"},"versions":{"0.1.0":{"name":"cb","version":"0.1.0","devDependencies":{"mocha":">=0.3.6"},"dist":{"shasum":"26f7e740f2808facc83cef7b20392e4d881b5203","tarball":"https://registry.npmjs.org/cb/-/cb-0.1.0.tgz"},"engines":{"node":">=0.6.0"}}},"modified":"2013-06-17T21:28:25.871Z"}
