@@ -25,6 +25,7 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
 import {useState, useEffect} from 'react';
+import queryString from 'query-string';
 
 function Copyright() {
   return (
@@ -120,7 +121,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard() {
+export default function Dashboard({location}) {
+  const { code } = queryString.parse(location.search);
+  const [authCode, setAuthCode] = useState("None");
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [currentState, setCurrent] = React.useState(false);
@@ -132,7 +135,18 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  useEffect(() =>{
+    fetch(`http://localhost:3001/getUserData?code=${code}`,{
+      method: 'GET',
+      headers : { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
 
+      }
+    })
+    .then(res => res.json())
+    .then (res =>setAuthCode(JSON.stringify(res)));
+  }, [code])
 
 
   return (
@@ -150,7 +164,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            {authCode}
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">

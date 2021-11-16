@@ -34,6 +34,24 @@ const usersRouter = require('./routes/users');
 
 app.get('/', (req, res) =>{
     console.log("Made it here")
+    /*
+    if(req.oidc.isAuthenticated()){
+        console.log("The if")
+        res.send("We are already logged in")
+    }
+    else{
+        console.log("The else");
+        auth({
+            authRequired: false,
+            auth0Logout: true,
+            issuerBaseURL: process.env.ISSUER_BASE_URL,
+            baseURL: process.env.BASE_URL,
+            clientID: process.env.CLIENT_ID,
+            secret: process.env.SECRET,
+            idpLogout: true,
+          });
+        res.send(JSON.stringify(req.oidc.user));
+    }*/
     res.send(req.oidc.isAuthenticated() ? 'Logged In' : 'Logged Out');
 })
 
