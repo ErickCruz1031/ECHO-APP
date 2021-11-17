@@ -1,30 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
-import Dashboard from './components/dashboard/Dashboard';
-import SignIn from './components/Signin/Signin'
-import {useState, useEffect} from 'react';
-import {BrowserRouter as Router,
-  Routes, Route, Link, Redirect, withRouter} from 'react-router-dom';
-import Signin from './components/Signin/Signin';
+import NavBar from './components/NavBar';
 
-
-const App = () =>{
+function App() {
   return (
-      <Routes>
-        <Route exact path='/' element={<Signin/>} />
-        <Route exact path='/home' element={<Dashboard/>} />
-      </Routes>
- 
+    <div className="App">
+      <NavBar />
+    </div>
   );
 }
 
 export default App;
-
-/*
-
-
-   <div className="App">
-      <Dashboard />
-    </div>
-
-    */
