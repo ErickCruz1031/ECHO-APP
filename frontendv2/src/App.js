@@ -1,30 +1,22 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import Dashboard from './components/dashboard/Dashboard';
-import SignIn from './components/Signin/Signin'
-import {useState, useEffect} from 'react';
-import {BrowserRouter as Router,
-  Routes, Route, Link, Redirect, withRouter} from 'react-router-dom';
-import Signin from './components/Signin/Signin';
+import LoginButton from './components/LoginButton';
+import LogoutButton from './components/LogoutButton';
+import Profile from './components/Profile';
+import { useAuth0 } from '@auth0/auth0-react';
 
+function App() {
+  const { isLoading } = useAuth0();
 
-const App = () =>{
+  if (isLoading) return <div>Loading...</div>
+
   return (
-      <Routes>
-        <Route exact path='/' element={<Signin/>} />
-        <Route exact path='/home' element={<Dashboard/>} />
-      </Routes>
- 
+    <>
+      <LoginButton />
+      <LogoutButton />
+      <Profile />
+    </>
   );
 }
 
 export default App;
-
-/*
-
-
-   <div className="App">
-      <Dashboard />
-    </div>
-
-    */
