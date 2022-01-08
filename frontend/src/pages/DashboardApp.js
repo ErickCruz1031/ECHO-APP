@@ -58,9 +58,6 @@ export default function DashboardApp() {
           <Grid item xs={12} md={6} lg={8}>
             <Profile />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject />
-          </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate />
@@ -70,29 +67,8 @@ export default function DashboardApp() {
             <AppOrderTimeline />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWeeklySales />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppNewUsers />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppItemOrders />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppBugReports />
-          </Grid>
-
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
