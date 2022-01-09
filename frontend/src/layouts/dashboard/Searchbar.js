@@ -54,6 +54,10 @@ export default function Searchbar() {
 
   }
 
+  const clickAway = e =>{
+    setOpen(false);//Set open to false so the search bar closes
+  }
+
   const handleClose = () => {
     //setOpen(false);
     console.log("Entered the search bugton");
@@ -78,7 +82,7 @@ export default function Searchbar() {
   };
 
   return (
-    <>
+    <ClickAwayListener onClickAway={clickAway}>
       <div>
         {!isOpen && (
           <IconButton onClick={handleOpen}>
@@ -111,6 +115,6 @@ export default function Searchbar() {
           </SearchbarStyle>
         </Slide>
       </div>
-    </>
+    </ClickAwayListener>
   );
 }
