@@ -6,9 +6,11 @@ import LoginButton from '../components/LoginButton'
 import Profile from '../components/Profile'
 import { useAuth0 } from "@auth0/auth0-react";
 //import { useEffect, useRef, useState } from 'react';
+//import AppBookSeachList from '../components/_dashboard/app/AppBookSeachList.js';
 
 import {
   AppTasks,
+  AppBookSearchList,
   AppNewUsers,
   AppBugReports,
   AppItemOrders,
@@ -19,7 +21,7 @@ import {
   AppWebsiteVisits,
   AppTrafficBySite,
   AppCurrentSubject,
-  AppConversionRates
+  AppConversionRates,
 } from '../components/_dashboard/app';
 import { useEffect, useState} from 'react';
 
@@ -31,6 +33,8 @@ export default function DashboardApp() {
   const [username, setUsername] = useState("");//Variable for username
   const [email, setEmail] = useState(""); //Variable for the email of the user
   const [NYT_Key, setNYT] = useState("mEfQxnocskwDVVKNrJDNDIWmUHn13VBZ");//API key for NYT API (Temporary, will move to AWS secret manager)
+  const [nytList, setNYTList] = useState({});//This will be the list that we fetch when we mount this component from NYT API
+
 
   useEffect(() =>{
     if(user != null){
@@ -46,6 +50,8 @@ export default function DashboardApp() {
       const res = await fetch(query);
       const data = await res.json();
       console.log("This is the data from the NYT API:\n ", data);
+      setNYTList(data.results.lists);
+      console.log("Loaded the information from NYT. Moving forward")
     };
 
     callNYT();//Call the function to call NYTAPI
@@ -74,7 +80,7 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppNewsUpdate />
+            <AppBookSearchList />
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>

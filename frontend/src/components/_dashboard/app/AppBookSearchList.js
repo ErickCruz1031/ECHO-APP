@@ -25,7 +25,7 @@ const NEWS = [...Array(5)].map((_, index) => {
 
 // ----------------------------------------------------------------------
 
-NewsItem.propTypes = {
+BookItem.propTypes = {
   news: PropTypes.object.isRequired
 };
 
@@ -58,7 +58,9 @@ function BookItem({ news }) {
 }
 
 //TODO: Pull the book list from the props. For now, we'll use the NEWS array as the inputs
-export default function AppBookSeachList() {
+//const AppBookSeachList = () => {
+export default function AppBookSearchList() {
+
   return (
     <Card>
       <CardHeader title="Books Found" />
@@ -87,3 +89,5 @@ export default function AppBookSeachList() {
     </Card>
   );
 }
+
+//export default AppBookSeachList;
