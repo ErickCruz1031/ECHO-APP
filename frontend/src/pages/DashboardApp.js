@@ -30,12 +30,26 @@ export default function DashboardApp() {
 
   const [username, setUsername] = useState("");//Variable for username
   const [email, setEmail] = useState(""); //Variable for the email of the user
+  const [NYT_Key, setNYT] = useState("mEfQxnocskwDVVKNrJDNDIWmUHn13VBZ");//API key for NYT API (Temporary, will move to AWS secret manager)
 
   useEffect(() =>{
     if(user != null){
       setUsername(user.nickname);
       setEmail(user.name);
     }
+
+    //After this, we get the latest list from NYT on bestsellers and popul;ate teh ApppBookSearchList component
+
+    const callNYT = async () =>{
+      const query = `https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=${NYT_Key}`
+      console.log("The NYT query in this component is ", query);
+      const res = await fetch(query);
+      const data = await res.json();
+      console.log("This is the data from the NYT API:\n ", data);
+    };
+
+    callNYT();//Call the function to call NYTAPI
+
 
   },[user])
 
