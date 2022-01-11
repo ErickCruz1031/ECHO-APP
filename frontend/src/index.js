@@ -22,7 +22,7 @@ ReactDOM.render(
     clientId={clientId}
     audience="https://userAuth.com"
     scope="read:user"
-    redirectUri="http://localhost:3000/dashboard"
+    redirectUri="http://localhost:3000/dashboard/app"
 
   >
     <HelmetProvider>

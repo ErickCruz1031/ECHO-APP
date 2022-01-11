@@ -60,8 +60,7 @@ export default function DashboardLayout() {
       <DashboardNavbar onOpenSidebar={() => setOpen(true)} userObject={user}/>
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} userObject={user}/>
       <MainStyle>
-        <Outlet />
-        <DashboardApp />
+        <Outlet />  
       </MainStyle>
     </RootStyle>
   );

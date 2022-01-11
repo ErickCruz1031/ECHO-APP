@@ -43,6 +43,7 @@ export default function DashboardApp() {
     }
 
     //After this, we get the latest list from NYT on bestsellers and popul;ate teh ApppBookSearchList component
+    /*
 
     const callNYT = async () =>{
       const query = `https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=${NYT_Key}`
@@ -55,6 +56,7 @@ export default function DashboardApp() {
     };
 
     callNYT();//Call the function to call NYTAPI
+    */
 
 
   },[user])
