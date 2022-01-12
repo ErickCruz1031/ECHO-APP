@@ -71,9 +71,9 @@ export default function AppBookSearchList() {
    }]); //This will be the list of items displayed in the book search section*/
    const [currentList, setList] = useState([]);
    const [NYT_Key, setNYT] = useState("mEfQxnocskwDVVKNrJDNDIWmUHn13VBZ");//API key for NYT API (Temporary, will move to AWS secret manager)
-   
-
-
+   const [page, updatePage] = useState(0);//We are going to display the first list at the beginning
+   const [queryResult, setResult] = useState([]);//This is where we will store all info from NYT
+   const [listTitle, setTitle] = useState("")
   useEffect(() =>{
     //console.log("This is the props passed to the search component: \n", bookList[0]);
     //setList(bookList[0].books);
@@ -86,6 +86,8 @@ export default function AppBookSearchList() {
       const data = await res.json();
       console.log("This is the data from the NYT API:\n ", data);
       setList(data.results.lists[0].books);
+      setTitle(data.results.lists[0].list_name);//Set the name for the component
+      setResult(data.results.lists);//Copy the whole object with the different lists, each will be a new page
       console.log("Loaded the information from NYT. Moving forward")
     };
 
@@ -99,7 +101,7 @@ export default function AppBookSearchList() {
 
   return (
     <Card>
-      <CardHeader title="Books Found" />
+      <CardHeader title= {listTitle} />
 
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
