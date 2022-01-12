@@ -10,6 +10,7 @@ import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from 
 import { mockImgCover } from '../../../utils/mockImages';
 //
 import Scrollbar from '../../Scrollbar';
+import { useEffect,useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +60,17 @@ function BookItem({ news }) {
 
 //TODO: Pull the book list from the props. For now, we'll use the NEWS array as the inputs
 //const AppBookSeachList = () => {
-export default function AppBookSearchList() {
+export default function AppBookSearchList({bookList}) {
+  //const [sliceFactor, setFactor] = useEffect(1);//We're going to slice the array passed by this factor on each page
+  const [currentList, setList] = useState({}); //This will be the list of items displayed in the book search section
+
+
+  useEffect(() =>{
+    //console.log("This is the props passed to the search component: \n", bookList[0]);
+    setList(bookList[0].books);
+    console.log("We set the list to ", bookList[0].books);
+
+  },[bookList]);
 
   return (
     <Card>
