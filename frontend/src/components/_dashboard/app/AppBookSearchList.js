@@ -99,6 +99,23 @@ export default function AppBookSearchList() {
 
   },[currentList]);
 
+  const changePage = e => {
+    e.preventDefault();
+    console.log("Changing page");
+    var newPage = page + 1; //Update new page
+    if (newPage >= queryResult.length){
+      console.log("No more pages left");
+      return;
+    }
+    else{
+      console.log("Updating the page to ", queryResult[newPage]);
+      setList(queryResult[newPage].books); //Update the current list to show the next list from the results
+      updatePage(newPage);//Update the page to the new one we are seeing
+      return;
+
+    }
+  }
+
   return (
     <Card>
       <CardHeader title= {listTitle} />
@@ -120,6 +137,7 @@ export default function AppBookSearchList() {
           color="inherit"
           component={RouterLink}
           endIcon={<Icon icon={arrowIosForwardFill} />}
+          onClick = {changePage}
         >
           Next Page
         </Button>
