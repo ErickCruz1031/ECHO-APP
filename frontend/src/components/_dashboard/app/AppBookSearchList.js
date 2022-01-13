@@ -110,6 +110,7 @@ export default function AppBookSearchList() {
     else{
       console.log("Updating the page to ", queryResult[newPage]);
       setList(queryResult[newPage].books); //Update the current list to show the next list from the results
+      setTitle(queryResult[newPage].list_name);//Update the title shown on the list component
       updatePage(newPage);//Update the page to the new one we are seeing
       return;
 
