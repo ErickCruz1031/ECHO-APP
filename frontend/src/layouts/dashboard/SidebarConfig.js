@@ -19,7 +19,7 @@ const sidebarConfig = [
   },
   {
     title: 'search books',
-    path: '/dashboard/user',
+    path: '/dashboard/search',
     icon: getIcon(peopleFill)
   },
   {
