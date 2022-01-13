@@ -22,6 +22,8 @@ import {
   AppTrafficBySite,
   AppCurrentSubject,
   AppConversionRates,
+  CurrentBooks,
+  AppReadingTimeline
 } from '../components/_dashboard/app';
 import { useEffect, useState} from 'react';
 
@@ -42,23 +44,6 @@ export default function DashboardApp() {
       setEmail(user.name);
     }
 
-    //After this, we get the latest list from NYT on bestsellers and popul;ate teh ApppBookSearchList component
-    
-    /*
-    const callNYT = async () =>{
-      const query = `https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=${NYT_Key}`
-      console.log("The NYT query in this component is ", query);
-      const res = await fetch(query);
-      const data = await res.json();
-      console.log("This is the data from the NYT API:\n ", data);
-      setNYTList(data.results.lists);
-      console.log("Loaded the information from NYT. Moving forward")
-    };
-
-    callNYT();//Call the function to call NYTAPI
-  */
-
-
   },[user])
 
   return (
@@ -67,26 +52,19 @@ export default function DashboardApp() {
         <Box sx={{ pb: 5 }}>
           <Typography variant="h4">Hi, Welcome back {username}</Typography>
         </Box>
-        <Grid container spacing={3}>
+          <Grid container spacing={3}>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppTasks />
+            <CurrentBooks />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <LoginButton />
-            <Typography variant="h4">This is the value {isAuthenticated}</Typography>
-          </Grid>
-          <Grid item xs={12} md={6} lg={8}>
-            <Profile />
-          </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppBookSearchList/>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline />
+            <AppReadingTimeline />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -96,6 +74,16 @@ export default function DashboardApp() {
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates />
           </Grid>
+
+          <Grid item xs={12} md={6} lg={8}>
+            <Profile />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={8}>
+            <LoginButton />
+            <Typography variant="h4">This is the value {isAuthenticated}</Typography>
+          </Grid>
+
         </Grid>
       </Container>
     </Page>

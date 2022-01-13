@@ -18,8 +18,8 @@ const sidebarConfig = [
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'user',
-    path: '/dashboard/user',
+    title: 'search books',
+    path: '/dashboard/search',
     icon: getIcon(peopleFill)
   },
   {
@@ -38,7 +38,7 @@ const sidebarConfig = [
     icon: getIcon(lockFill)
   },
   {
-    title: 'register',
+    title: 'hahaha',
     path: '/register',
     icon: getIcon(personAddFill)
   },
