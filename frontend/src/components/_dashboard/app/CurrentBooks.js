@@ -85,7 +85,7 @@ export default function CurrentBooks() {
           component={RouterLink}
           endIcon={<Icon icon={arrowIosForwardFill} />}
         >
-          View all
+          Next Page
         </Button>
       </Box>
     </Card>

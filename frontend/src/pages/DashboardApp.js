@@ -22,7 +22,8 @@ import {
   AppTrafficBySite,
   AppCurrentSubject,
   AppConversionRates,
-  CurrentBooks
+  CurrentBooks,
+  AppReadingTimeline
 } from '../components/_dashboard/app';
 import { useEffect, useState} from 'react';
 
@@ -51,30 +52,19 @@ export default function DashboardApp() {
         <Box sx={{ pb: 5 }}>
           <Typography variant="h4">Hi, Welcome back {username}</Typography>
         </Box>
-        <Grid container spacing={3}>
+          <Grid container spacing={3}>
 
-        <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={8}>
             <CurrentBooks />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppTasks />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <LoginButton />
-            <Typography variant="h4">This is the value {isAuthenticated}</Typography>
-          </Grid>
-          <Grid item xs={12} md={6} lg={8}>
-            <Profile />
-          </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppBookSearchList/>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline />
+            <AppReadingTimeline />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -84,6 +74,16 @@ export default function DashboardApp() {
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates />
           </Grid>
+
+          <Grid item xs={12} md={6} lg={8}>
+            <Profile />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={8}>
+            <LoginButton />
+            <Typography variant="h4">This is the value {isAuthenticated}</Typography>
+          </Grid>
+
         </Grid>
       </Container>
     </Page>

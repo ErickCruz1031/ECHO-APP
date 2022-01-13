@@ -119,7 +119,7 @@ export default function AppBookSearchList() {
 
   return (
     <Card>
-      <CardHeader title= {listTitle} />
+      <CardHeader title= {`New York Times: ${listTitle} List`} />
 
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
