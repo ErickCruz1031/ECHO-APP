@@ -30,14 +30,14 @@ export default function App() {
 export default function App() {
   return (
     <ThemeConfig>
-      <ScrollToTop />
-      <GlobalStyles />
-      <LoginButton />
-      <Profile />
-      <BaseOptionChartStyle />
-      <Router />
-    </ThemeConfig>
+    <ScrollToTop />
+    <GlobalStyles />
+    <BaseOptionChartStyle />
+    <Router />
+  </ThemeConfig>
+
   );
+}
 }
 
 

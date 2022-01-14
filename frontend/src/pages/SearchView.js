@@ -1,7 +1,7 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useLocation } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -71,13 +71,39 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function SearchView() {
+export default function SearchView({inputString}) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  //const { state } = useLocation()
+  //const [results, setResults] = useEffect([]);//This  will hold the results for the Google books API
+
+  useEffect(() =>{
+    console.log("We are here in the SearchView with ", inputString);
+    //console.log("These are the props from the state: \n", state)
+    //TODO: Call Google Books API with the input as the parameter for the query
+     const callBooksAPI = async () =>{
+       console.log("Calling the books API");
+       
+      //const query = `https://www.googleapis.com/books/v1/volumes?q=subject:nonfiction&key=${booksKey}`
+      //const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
+      //console.log("The query in this component is ", query);
+      //const res = await fetch(query);
+      //const data = await res.json();
+      //console.log("This is the data from the books API:\n ", data);
+
+      //setOpen(false);
+      //navigate('/dashboard/search');//Testing this
+      //TODO: Moving the API call to the the moment that we mount the Search View component
+
+
+     }
+     
+     //callBooksAPI();
+  })
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

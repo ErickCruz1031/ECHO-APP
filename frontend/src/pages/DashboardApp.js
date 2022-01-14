@@ -26,6 +26,7 @@ import {
   AppReadingTimeline
 } from '../components/_dashboard/app';
 import { useEffect, useState} from 'react';
+import SearchView from '../pages/SearchView';
 
 // ----------------------------------------------------------------------
 
@@ -73,6 +74,10 @@ export default function DashboardApp() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates />
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={8}>
+            <SearchView />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

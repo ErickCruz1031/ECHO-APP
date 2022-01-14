@@ -1,4 +1,5 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes, useEffect} from 'react-router-dom';
+import { useState  } from 'react';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
@@ -15,14 +16,26 @@ import NotFound from './pages/Page404';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+
+  const [searchBook, setBook] = useState("None");
+
+  useState(() =>{
+    console.log("This is the value in ROUTER: ", searchBook);
+  },[searchBook]);
+
+  const updateBook = (title) =>{
+    console.log("We are updating the searchBook to ", title);
+    setBook(title);
+  };
+
   return useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: <DashboardLayout updateFunc={updateBook}/>,
       children: [
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
-        { path: 'search', element: <SearchView /> },
+        { path: 'search', element: <SearchView inputString={searchBook} /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
