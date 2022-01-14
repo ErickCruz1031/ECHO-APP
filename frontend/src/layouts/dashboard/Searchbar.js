@@ -3,6 +3,7 @@ import { useState } from 'react';
 import searchFill from '@iconify/icons-eva/search-fill';
 // material
 import { styled, alpha } from '@mui/material/styles';
+import { generatePath, useNavigate } from 'react-router';
 import {
   Box,
   Input,
@@ -44,6 +45,8 @@ export default function Searchbar() {
   const [isOpen, setOpen] = useState(false);
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [inputString, setString] = useState("");
+  const navigate = useNavigate();
+  
   const handleOpen = () => {
     setOpen((prev) => !prev);
   };
@@ -73,6 +76,8 @@ export default function Searchbar() {
       console.log("This is the data from the books API:\n ", data);
 
       setOpen(false);
+      navigate('/dashboard/search');//Testing this
+
 
      }
      

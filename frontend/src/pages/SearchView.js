@@ -144,7 +144,7 @@ export default function SearchView() {
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
-            New User
+            Add Selected Books
           </Button>
         </Stack>
 
