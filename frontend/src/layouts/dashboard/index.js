@@ -34,7 +34,7 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function DashboardLayout() {
+export default function DashboardLayout({updateFunc}) {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated} = useAuth0();
 
@@ -42,6 +42,10 @@ export default function DashboardLayout() {
 
   useEffect(() =>{
     //console.log("This is the value of the thing: ", isAuthenticated());
+
+    //console.log("Calling function from layout");
+    //updateFunc("Layer 1");
+
     if(isAuthenticated){
       console.log("This is the user from deeeez: ", user)
 
@@ -57,7 +61,7 @@ export default function DashboardLayout() {
 
   return (
     <RootStyle>
-      <DashboardNavbar onOpenSidebar={() => setOpen(true)} userObject={user}/>
+      <DashboardNavbar onOpenSidebar={() => setOpen(true)} userObject={user} updateSearchBook={updateFunc}/>
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} userObject={user}/>
       <MainStyle>
         <Outlet />  

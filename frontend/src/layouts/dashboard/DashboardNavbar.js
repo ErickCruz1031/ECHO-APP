@@ -42,7 +42,7 @@ DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func
 };
 
-export default function DashboardNavbar({ onOpenSidebar , userObject}) {
+export default function DashboardNavbar({ onOpenSidebar , userObject, updateSearchBook}) {
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -52,7 +52,7 @@ export default function DashboardNavbar({ onOpenSidebar , userObject}) {
           </IconButton>
         </MHidden>
 
-        <Searchbar />
+        <Searchbar setSearchString={updateSearchBook}/>
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
