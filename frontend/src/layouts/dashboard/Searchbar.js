@@ -82,6 +82,7 @@ export default function Searchbar({setSearchString}) {
 
      }
      console.log("Calling the parent function")
+     setOpen(false);
      setSearchString(inputString);
      navigate('/dashboard/search');//Testing this
      
