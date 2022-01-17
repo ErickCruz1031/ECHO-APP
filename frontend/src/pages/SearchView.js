@@ -18,8 +18,13 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  fabClasses
 } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -78,9 +83,9 @@ export default function SearchView({inputString}) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  //const { state } = useLocation()
-  //const [results, setResults] = useEffect([]);//This  will hold the results for the Google books API
-
+  const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
+  const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
+ 
   useEffect(() =>{
     console.log("We are here in the SearchView with ", inputString);
     //console.log("These are the props from the state: \n", state)
@@ -89,11 +94,12 @@ export default function SearchView({inputString}) {
        console.log("Calling the books API");
        
       //const query = `https://www.googleapis.com/books/v1/volumes?q=subject:nonfiction&key=${booksKey}`
-      //const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
-      //console.log("The query in this component is ", query);
-      //const res = await fetch(query);
-      //const data = await res.json();
-      //console.log("This is the data from the books API:\n ", data);
+      const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
+      console.log("The query in this component is ", query);
+      const res = await fetch(query);
+      const data = await res.json();
+      console.log("This is the data from the books API:\n ", data);
+      setResult(data.items);
 
       //setOpen(false);
       //navigate('/dashboard/search');//Testing this
@@ -101,8 +107,12 @@ export default function SearchView({inputString}) {
 
 
      }
+     console.log("Called to mount")
+     if (queryResult.length == 0 && inputString != null){
+      callBooksAPI();
+     }
      
-     //callBooksAPI();
+ 
   })
 
   const handleRequestSort = (event, property) => {
@@ -113,7 +123,7 @@ export default function SearchView({inputString}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = queryResult.map((n) => n.volumeInfo.title);
       setSelected(newSelecteds);
       return;
     }
@@ -123,6 +133,10 @@ export default function SearchView({inputString}) {
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
+    //event.target.checked = true;
+    console.log("Selected with these parameters: ", event, " ", name);
+    //return;
+    
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
@@ -135,7 +149,10 @@ export default function SearchView({inputString}) {
         selected.slice(selectedIndex + 1)
       );
     }
+
+    console.log("This is the new selected ", newSelected);
     setSelected(newSelected);
+    
   };
 
   const handleChangePage = (event, newPage) => {
@@ -158,6 +175,13 @@ export default function SearchView({inputString}) {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
+    <>
+    { (queryResult.length == 0) ?
+                              
+    <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>
+    :
     <Page title="Search | Minimal-UI">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -188,65 +212,90 @@ export default function SearchView({inputString}) {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={queryResult.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
-                <TableBody>
-                  {filteredUsers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                  <TableBody>
+                    {queryResult
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => {
+                        const { id, name, role, status, company, avatarUrl, isVerified } = row;
 
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
-                            />
-                          </TableCell>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={avatarUrl} />
-                              <Typography variant="subtitle2" noWrap>
-                                {name}
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-                          <TableCell align="left">{company}</TableCell>
-                          <TableCell align="left">{role}</TableCell>
-                          <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={(status === 'banned' && 'error') || 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
+                        console.log("WORKING WITH THIS ROW: ", row);
+                        console.log("This is the value of the check ", row.volumeInfo.hasOwnProperty('imageLinks'));
 
-                          <TableCell align="right">
-                            <UserMoreMenu />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
+                        const title = row.volumeInfo.title;
+                        const author = row.volumeInfo.authors;//There might be more than 1 but just use the first one
+                        const description = row.volumeInfo.description;
+                        const publishDate = row.volumeInfo.publishedDate;
+                        const rating = row.volumeInfo.averageRating;
+                        const marker = row.etag;
+                        //const thumbnail = "";//row.volumeInfo.imageLinks.smallThumbnail;
+                        var thumbnail;
+                        if (row.volumeInfo.hasOwnProperty('imageLinks')){
+                          thumbnail = row.volumeInfo.imageLinks.smallThumbnail;
+                        }
+                        else{
+                          thumbnail = "";
+
+                        }
+                        
+
+                        const isItemSelected = selected.indexOf(marker) !== -1;
+
+                        return (
+                          <TableRow
+                            hover
+                            key={marker}
+                            tabIndex={-1}
+                            role="checkbox"
+                            selected={isItemSelected}
+                            aria-checked={fabClasses}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={isItemSelected}
+                                onChange={(event) => handleClick(event, marker)}
+                              />
+                            </TableCell>
+                            <TableCell component="th" scope="row" padding="none">
+                              <Stack direction="row" alignItems="center" spacing={2}>
+                                <Avatar alt={title} src={thumbnail} />
+                                <Typography variant="subtitle2" noWrap>
+                                  {title}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+                            <TableCell align="left">{author}</TableCell>
+                            <TableCell align="left">{title}</TableCell>
+                            <TableCell align="left">{publishDate}</TableCell>
+                            <TableCell align="left">
+                              <Label
+                                variant="ghost"
+                                color={'success'}
+                              >
+                                {rating}
+                              </Label>
+                            </TableCell>
+
+                            <TableCell align="right">
+                              <UserMoreMenu />
+                            </TableCell>
+                          </TableRow>
+                        );
+
+
+
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
@@ -257,6 +306,7 @@ export default function SearchView({inputString}) {
                   </TableBody>
                 )}
               </Table>
+                    
             </TableContainer>
           </Scrollbar>
 
@@ -272,5 +322,16 @@ export default function SearchView({inputString}) {
         </Card>
       </Container>
     </Page>
+  }
+  </>
   );
 }
+
+
+/*
+{filteredUsers
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                      const isItemSelected = selected.indexOf(name) !== -1;
+*/
