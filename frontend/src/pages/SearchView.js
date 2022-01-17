@@ -22,6 +22,9 @@ import {
   fabClasses
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -130,10 +133,10 @@ export default function SearchView({inputString}) {
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
+    //event.target.checked = true;
     console.log("Selected with these parameters: ", event, " ", name);
-    return;
-
-    /*
+    //return;
+    
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
@@ -146,8 +149,10 @@ export default function SearchView({inputString}) {
         selected.slice(selectedIndex + 1)
       );
     }
+
+    console.log("This is the new selected ", newSelected);
     setSelected(newSelected);
-    */
+    
   };
 
   const handleChangePage = (event, newPage) => {
@@ -170,6 +175,13 @@ export default function SearchView({inputString}) {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
+    <>
+    { (queryResult.length == 0) ?
+                              
+    <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>
+    :
     <Page title="Search | Minimal-UI">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -195,14 +207,6 @@ export default function SearchView({inputString}) {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
-            {(queryResult.length == 0) ?
-              
-              <CircularProgress />
-
-              : 
-              
-              
-
               <Table>
                 <UserListHead
                   order={order}
@@ -213,84 +217,85 @@ export default function SearchView({inputString}) {
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
-                <TableBody>
-                  {queryResult
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                  <TableBody>
+                    {queryResult
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => {
+                        const { id, name, role, status, company, avatarUrl, isVerified } = row;
 
-                      console.log("WORKING WITH THIS ROW: ", row);
-                      console.log("This is the value of the check ", row.volumeInfo.hasOwnProperty('imageLinks'));
+                        console.log("WORKING WITH THIS ROW: ", row);
+                        console.log("This is the value of the check ", row.volumeInfo.hasOwnProperty('imageLinks'));
 
-                      const title = row.volumeInfo.title;
-                      const author = row.volumeInfo.authors;//There might be more than 1 but just use the first one
-                      const description = row.volumeInfo.description;
-                      const publishDate = row.volumeInfo.publishedDate;
-                      const rating = row.volumeInfo.averageRating;
-                      const marker = row.etag;
-                      //const thumbnail = "";//row.volumeInfo.imageLinks.smallThumbnail;
-                      var thumbnail;
-                      if (row.volumeInfo.hasOwnProperty('imageLinks')){
-                         thumbnail = row.volumeInfo.imageLinks.smallThumbnail;
-                      }
-                      else{
-                         thumbnail = "";
+                        const title = row.volumeInfo.title;
+                        const author = row.volumeInfo.authors;//There might be more than 1 but just use the first one
+                        const description = row.volumeInfo.description;
+                        const publishDate = row.volumeInfo.publishedDate;
+                        const rating = row.volumeInfo.averageRating;
+                        const marker = row.etag;
+                        //const thumbnail = "";//row.volumeInfo.imageLinks.smallThumbnail;
+                        var thumbnail;
+                        if (row.volumeInfo.hasOwnProperty('imageLinks')){
+                          thumbnail = row.volumeInfo.imageLinks.smallThumbnail;
+                        }
+                        else{
+                          thumbnail = "";
 
-                      }
-                      
+                        }
+                        
 
-                      //const isItemSelected = selected.indexOf(name) !== -1;
+                        const isItemSelected = selected.indexOf(marker) !== -1;
 
-                      return (
-                        <TableRow
-                          hover
-                          key={marker}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={false}
-                          aria-checked={fabClasses}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={false}
-                              onChange={(event) => handleClick(event, title)}
-                            />
-                          </TableCell>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={title} src={thumbnail} />
-                              <Typography variant="subtitle2" noWrap>
-                                {title}
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-                          <TableCell align="left">{author}</TableCell>
-                          <TableCell align="left">{title}</TableCell>
-                          <TableCell align="left">{publishDate}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={'success'}
-                            >
-                              {rating}
-                            </Label>
-                          </TableCell>
+                        return (
+                          <TableRow
+                            hover
+                            key={marker}
+                            tabIndex={-1}
+                            role="checkbox"
+                            selected={isItemSelected}
+                            aria-checked={fabClasses}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={isItemSelected}
+                                onChange={(event) => handleClick(event, marker)}
+                              />
+                            </TableCell>
+                            <TableCell component="th" scope="row" padding="none">
+                              <Stack direction="row" alignItems="center" spacing={2}>
+                                <Avatar alt={title} src={thumbnail} />
+                                <Typography variant="subtitle2" noWrap>
+                                  {title}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+                            <TableCell align="left">{author}</TableCell>
+                            <TableCell align="left">{title}</TableCell>
+                            <TableCell align="left">{publishDate}</TableCell>
+                            <TableCell align="left">
+                              <Label
+                                variant="ghost"
+                                color={'success'}
+                              >
+                                {rating}
+                              </Label>
+                            </TableCell>
 
-                          <TableCell align="right">
-                            <UserMoreMenu />
-                          </TableCell>
-                        </TableRow>
-                      );
+                            <TableCell align="right">
+                              <UserMoreMenu />
+                            </TableCell>
+                          </TableRow>
+                        );
 
 
 
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
@@ -301,7 +306,7 @@ export default function SearchView({inputString}) {
                   </TableBody>
                 )}
               </Table>
-            }         
+                    
             </TableContainer>
           </Scrollbar>
 
@@ -317,6 +322,8 @@ export default function SearchView({inputString}) {
         </Card>
       </Container>
     </Page>
+  }
+  </>
   );
 }
 
