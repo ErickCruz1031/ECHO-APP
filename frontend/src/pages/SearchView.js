@@ -18,8 +18,10 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  fabClasses
 } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -118,7 +120,7 @@ export default function SearchView({inputString}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = queryResult.map((n) => n.volumeInfo.title);
       setSelected(newSelecteds);
       return;
     }
@@ -128,6 +130,10 @@ export default function SearchView({inputString}) {
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
+    console.log("Selected with these parameters: ", event, " ", name);
+    return;
+
+    /*
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
@@ -141,6 +147,7 @@ export default function SearchView({inputString}) {
       );
     }
     setSelected(newSelected);
+    */
   };
 
   const handleChangePage = (event, newPage) => {
@@ -188,12 +195,20 @@ export default function SearchView({inputString}) {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
+            {(queryResult.length == 0) ?
+              
+              <CircularProgress />
+
+              : 
+              
+              
+
               <Table>
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={queryResult.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -205,29 +220,40 @@ export default function SearchView({inputString}) {
                       const { id, name, role, status, company, avatarUrl, isVerified } = row;
 
                       console.log("WORKING WITH THIS ROW: ", row);
+                      console.log("This is the value of the check ", row.volumeInfo.hasOwnProperty('imageLinks'));
 
                       const title = row.volumeInfo.title;
                       const author = row.volumeInfo.authors;//There might be more than 1 but just use the first one
                       const description = row.volumeInfo.description;
                       const publishDate = row.volumeInfo.publishedDate;
                       const rating = row.volumeInfo.averageRating;
-                      const thumbnail = row.volumeInfo.imageLinks.smallThumbnail
+                      const marker = row.etag;
+                      //const thumbnail = "";//row.volumeInfo.imageLinks.smallThumbnail;
+                      var thumbnail;
+                      if (row.volumeInfo.hasOwnProperty('imageLinks')){
+                         thumbnail = row.volumeInfo.imageLinks.smallThumbnail;
+                      }
+                      else{
+                         thumbnail = "";
 
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                      }
+                      
+
+                      //const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
                         <TableRow
                           hover
-                          key={title}
+                          key={marker}
                           tabIndex={-1}
                           role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
+                          selected={false}
+                          aria-checked={fabClasses}
                         >
                           <TableCell padding="checkbox">
                             <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
+                              checked={false}
+                              onChange={(event) => handleClick(event, title)}
                             />
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
@@ -275,6 +301,7 @@ export default function SearchView({inputString}) {
                   </TableBody>
                 )}
               </Table>
+            }         
             </TableContainer>
           </Scrollbar>
 
