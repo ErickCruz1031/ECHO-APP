@@ -78,9 +78,9 @@ export default function SearchView({inputString}) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  //const { state } = useLocation()
-  //const [results, setResults] = useEffect([]);//This  will hold the results for the Google books API
-
+  const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
+  const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
+ 
   useEffect(() =>{
     console.log("We are here in the SearchView with ", inputString);
     //console.log("These are the props from the state: \n", state)
@@ -89,11 +89,12 @@ export default function SearchView({inputString}) {
        console.log("Calling the books API");
        
       //const query = `https://www.googleapis.com/books/v1/volumes?q=subject:nonfiction&key=${booksKey}`
-      //const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
-      //console.log("The query in this component is ", query);
-      //const res = await fetch(query);
-      //const data = await res.json();
-      //console.log("This is the data from the books API:\n ", data);
+      const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
+      console.log("The query in this component is ", query);
+      const res = await fetch(query);
+      const data = await res.json();
+      console.log("This is the data from the books API:\n ", data);
+      setResult(data.items);
 
       //setOpen(false);
       //navigate('/dashboard/search');//Testing this
@@ -101,8 +102,12 @@ export default function SearchView({inputString}) {
 
 
      }
+     console.log("Called to mount")
+     if (queryResult.length == 0 && inputString != null){
+      callBooksAPI();
+     }
      
-     //callBooksAPI();
+ 
   })
 
   const handleRequestSort = (event, property) => {
@@ -194,16 +199,26 @@ export default function SearchView({inputString}) {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers
+                  {queryResult
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       const { id, name, role, status, company, avatarUrl, isVerified } = row;
+
+                      console.log("WORKING WITH THIS ROW: ", row);
+
+                      const title = row.volumeInfo.title;
+                      const author = row.volumeInfo.authors;//There might be more than 1 but just use the first one
+                      const description = row.volumeInfo.description;
+                      const publishDate = row.volumeInfo.publishedDate;
+                      const rating = row.volumeInfo.averageRating;
+                      const thumbnail = row.volumeInfo.imageLinks.smallThumbnail
+
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
                         <TableRow
                           hover
-                          key={id}
+                          key={title}
                           tabIndex={-1}
                           role="checkbox"
                           selected={isItemSelected}
@@ -217,21 +232,21 @@ export default function SearchView({inputString}) {
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={avatarUrl} />
+                              <Avatar alt={title} src={thumbnail} />
                               <Typography variant="subtitle2" noWrap>
-                                {name}
+                                {title}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{company}</TableCell>
-                          <TableCell align="left">{role}</TableCell>
-                          <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                          <TableCell align="left">{author}</TableCell>
+                          <TableCell align="left">{title}</TableCell>
+                          <TableCell align="left">{publishDate}</TableCell>
                           <TableCell align="left">
                             <Label
                               variant="ghost"
-                              color={(status === 'banned' && 'error') || 'success'}
+                              color={'success'}
                             >
-                              {sentenceCase(status)}
+                              {rating}
                             </Label>
                           </TableCell>
 
@@ -240,6 +255,9 @@ export default function SearchView({inputString}) {
                           </TableCell>
                         </TableRow>
                       );
+
+
+
                     })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
@@ -274,3 +292,12 @@ export default function SearchView({inputString}) {
     </Page>
   );
 }
+
+
+/*
+{filteredUsers
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                      const isItemSelected = selected.indexOf(name) !== -1;
+*/
