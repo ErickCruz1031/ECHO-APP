@@ -39,9 +39,9 @@ import USERLIST from '../_mocks_/user';
 const TABLE_HEAD = [
   { id: 'title', label: 'Title', alignRight: false },
   { id: 'author', label: 'Author', alignRight: false },
-  { id: 'description', label: 'Description', alignRight: false },
+  { id: 'category', label: 'Category', alignRight: false },
   { id: 'publishdate', label: 'Published Date', alignRight: false },
-  { id: 'rating', label: 'Average Rating', alignRight: false },
+  { id: 'rating', label: 'Average Rating (Max 5)', alignRight: false },
   { id: '' }
 ];
 
@@ -168,6 +168,12 @@ export default function SearchView({inputString}) {
     setFilterName(event.target.value);
   };
 
+  const handleAdd = e =>{
+    console.log("Adding books to the user list: ", selected);
+
+
+  };//This function will handle the backend call to add the books to the list for this user
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -191,6 +197,7 @@ export default function SearchView({inputString}) {
           <Button
             variant="contained"
             component={RouterLink}
+            onClick={handleAdd}
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
@@ -225,12 +232,22 @@ export default function SearchView({inputString}) {
 
                         console.log("WORKING WITH THIS ROW: ", row);
                         console.log("This is the value of the check ", row.volumeInfo.hasOwnProperty('imageLinks'));
+                        console.log("This is the value for rating ", row.volumeInfo.averageRating)
 
                         const title = row.volumeInfo.title;
                         const author = row.volumeInfo.authors;//There might be more than 1 but just use the first one
-                        const description = row.volumeInfo.description;
+                        const categories = row.volumeInfo.categories;
                         const publishDate = row.volumeInfo.publishedDate;
-                        const rating = row.volumeInfo.averageRating;
+
+                        var rating;
+                        if (row.volumeInfo.averageRating == null){
+                          rating = 'Not Available'
+
+                        }
+                        else{
+                          rating = row.volumeInfo.averageRating
+                        }
+
                         const marker = row.etag;
                         //const thumbnail = "";//row.volumeInfo.imageLinks.smallThumbnail;
                         var thumbnail;
@@ -269,12 +286,13 @@ export default function SearchView({inputString}) {
                               </Stack>
                             </TableCell>
                             <TableCell align="left">{author}</TableCell>
-                            <TableCell align="left">{title}</TableCell>
+                            <TableCell align="left">{categories}</TableCell>
                             <TableCell align="left">{publishDate}</TableCell>
                             <TableCell align="left">
                               <Label
                                 variant="ghost"
                                 color={'success'}
+                                color={(rating === 'Not Available' && 'error') || 'success'}
                               >
                                 {rating}
                               </Label>
@@ -313,7 +331,7 @@ export default function SearchView({inputString}) {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={queryResult.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
