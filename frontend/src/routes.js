@@ -11,6 +11,7 @@ import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import SearchView from './pages/SearchView';
+import UserList from './pages/UserList';
 import NotFound from './pages/Page404';
 
 // ----------------------------------------------------------------------
@@ -36,7 +37,7 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'search', element: <SearchView inputString={searchBook} /> },
-        { path: 'products', element: <Products /> },
+        { path: 'userlist', element: <UserList /> },
         { path: 'blog', element: <Blog /> }
       ]
     },
