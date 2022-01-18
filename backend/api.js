@@ -3,6 +3,7 @@ var app = express();
 var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 var guard = require('express-jwt-permissions')();
+const cors = require('cors');
 
 var port = process.env.PORT || 8080;
 
@@ -18,6 +19,7 @@ var jwtCheck = jwt({
     algorithms: ['RS256']
 });
 
+app.use(cors());
 app.use(jwtCheck);
 
 app.get('/userInfo', guard.check(['read:user']), function (req, res) {

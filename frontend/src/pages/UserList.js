@@ -40,8 +40,8 @@ const TABLE_HEAD = [
   { id: 'title', label: 'Title', alignRight: false },
   { id: 'author', label: 'Author', alignRight: false },
   { id: 'category', label: 'Category', alignRight: false },
-  { id: 'publishdate', label: 'Published Date', alignRight: false },
-  { id: 'rating', label: 'Average Rating (Max 5)', alignRight: false },
+  { id: 'dateadded', label: 'Date Added', alignRight: false },
+  { id: 'status', label: 'Currently Reading?', alignRight: false },
   { id: '' }
 ];
 
@@ -178,11 +178,11 @@ export default function UserList() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-      <Page title="User | Minimal-UI">
+      <Page title="User List| Minimal-UI">
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
-              User
+              User Book List
             </Typography>
             <Button
               variant="contained"

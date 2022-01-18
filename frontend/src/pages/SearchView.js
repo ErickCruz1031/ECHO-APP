@@ -168,6 +168,12 @@ export default function SearchView({inputString}) {
     setFilterName(event.target.value);
   };
 
+  const handleAdd = e =>{
+    console.log("Adding books to the user list: ", selected);
+
+
+  };//This function will handle the backend call to add the books to the list for this user
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -191,6 +197,7 @@ export default function SearchView({inputString}) {
           <Button
             variant="contained"
             component={RouterLink}
+            onClick={handleAdd}
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
