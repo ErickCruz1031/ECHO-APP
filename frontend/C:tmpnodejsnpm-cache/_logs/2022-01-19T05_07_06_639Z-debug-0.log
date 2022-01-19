@@ -3,8 +3,8 @@
 2 info using node@v14.17.1
 3 timing npm:load:whichnode Completed in 0ms
 4 timing config:load:defaults Completed in 1ms
-5 timing config:load:file:/usr/local/lib/node_modules/npm/npmrc Completed in 5ms
-6 timing config:load:builtin Completed in 6ms
+5 timing config:load:file:/usr/local/lib/node_modules/npm/npmrc Completed in 1ms
+6 timing config:load:builtin Completed in 1ms
 7 timing config:load:cli Completed in 2ms
 8 timing config:load:env Completed in 0ms
 9 timing config:load:file:/Users/erickjaimez/Desktop/ECO-APP/frontend/.npmrc Completed in 0ms
@@ -15,18 +15,19 @@
 14 timing config:load:global Completed in 1ms
 15 timing config:load:validate Completed in 1ms
 16 timing config:load:credentials Completed in 0ms
-17 timing config:load:setEnvs Completed in 0ms
-18 timing config:load Completed in 13ms
-19 timing npm:load:configload Completed in 13ms
-20 timing npm:load:setTitle Completed in 18ms
+17 timing config:load:setEnvs Completed in 1ms
+18 timing config:load Completed in 8ms
+19 timing npm:load:configload Completed in 9ms
+20 timing npm:load:setTitle Completed in 16ms
 21 timing config:load:flatten Completed in 2ms
-22 timing npm:load:display Completed in 5ms
-23 verbose logfile /Users/erickjaimez/Desktop/ECO-APP/frontend/C:tmpnodejsnpm-cache/_logs/2022-01-18T04_34_34_152Z-debug-0.log
+22 timing npm:load:display Completed in 4ms
+23 verbose logfile /Users/erickjaimez/Desktop/ECO-APP/frontend/C:tmpnodejsnpm-cache/_logs/2022-01-19T05_07_06_639Z-debug-0.log
 24 timing npm:load:logFile Completed in 5ms
 25 timing npm:load:timers Completed in 0ms
 26 timing npm:load:configScope Completed in 0ms
-27 timing npm:load Completed in 42ms
-28 timing command:run Completed in 134839ms
-29 verbose exit 0
-30 timing npm Completed in 135185ms
-31 info ok
+27 timing npm:load Completed in 35ms
+28 silly logfile start cleaning logs, removing 1 files
+29 timing command:run Completed in 49800ms
+30 verbose exit 0
+31 timing npm Completed in 49965ms
+32 info ok

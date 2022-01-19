@@ -22,10 +22,10 @@ var jwtCheck = jwt({
 app.use(cors());
 app.use(jwtCheck);
 
-app.get('/userlist', function (req, res) {
-    console.log("Got the request for userlist")
+app.get('/authorized', function (req, res) {
+    console.log("Got the request")
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({data: "THIS IS THE userlist"}));
+    res.send(JSON.stringify({data: "THIS IS THE DATA"}));
 });
 
 app.listen(port);

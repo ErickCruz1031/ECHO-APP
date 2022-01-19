@@ -32,15 +32,25 @@ export default function Profile(){
 
   }
 
-
-  const handlerBackend = async () =>{
-    const backendCall = async () =>{
+  /*
       const response = await fetch(`http://localhost:8080/authorized`,{
         headers:{
           Authorization: `Bearer ${bearerToken}`,
         }
       })
+  */
 
+
+  const handlerBackend = async () =>{
+    const backendCall = async () =>{
+      const response = await fetch(`http://localhost:8080/userlist`,{
+        headers:{
+          "Content-Type": 'application/json',
+          "Accept": 'application/json',
+          "Authorization": `Bearer ${bearerToken}`
+          
+        }
+      })
       const data = await response.json();
       console.log("This is the response: ", data);
 

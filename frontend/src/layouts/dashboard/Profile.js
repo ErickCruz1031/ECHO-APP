@@ -35,14 +35,17 @@ export default function Profile(){
 
   const handlerBackend = async () =>{
     const backendCall = async () =>{
-      const response = await fetch(`http://localhost:8080/authorized`,{
+      const data = "poop"
+      /*
+      const response = await fetch(`http://localhost:8080/userInfo`,{
         headers:{
           Authorization: `Bearer ${bearerToken}`,
         }
-      })
+      }) 
 
       const data = await response.json();
-      console.log("This is the response: ", data);
+      */
+      console.log("This is the response for the time being: ", data);
 
     }
 
