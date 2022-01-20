@@ -3,8 +3,13 @@ var app = express();
 var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 const cors = require('cors');
+var bodyParser = require('body-parser')
+const util = require('util')
 
 var port = process.env.PORT || 8080;
+
+var jsonParser = bodyParser.json()
+
 
 var jwtCheck = jwt({
       secret: jwks.expressJwtSecret({
@@ -18,9 +23,11 @@ var jwtCheck = jwt({
     algorithms: ['RS256']
 });
 
-
+app.use(bodyParser.json());
+app.use(express.json())
 app.use(cors());
 app.use(jwtCheck);
+
 
 app.get('/userlist', function (req, res) {
     console.log("Got the request for userlist")
@@ -28,10 +35,21 @@ app.get('/userlist', function (req, res) {
     res.send(JSON.stringify({data: "THIS IS THE userlist"}));
 });
 
-app.get('/addbook', function (req, res) {
-    console.log("Got the request to add book")
+app.get('/readbook', function (req, res) {
+    console.log("Got the request to read book")
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({data: "Hello from Addbook!"}));
+});
+
+app.post('/addbook', function (req, res) {
+    var data = req.body;
+    console.log("Got the request to add book");
+    console.log("These is the body of the request: ", data);
+    console.log("These is the body of the request: ", req.body.books[0].etag);
+    console.log(util.inspect(req.body.books, {showHidden: false, depth: null, colors: true}))
+    console.log(JSON.stringify(req.body.books, null, 2))
+    res.setHeader('Content-Type', 'application/json');
+    res.send(req.body);
 });
 
 app.listen(port);
