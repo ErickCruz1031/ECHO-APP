@@ -170,6 +170,16 @@ export default function SearchView({inputString}) {
 
   const handleAdd = e =>{
     console.log("Adding books to the user list: ", selected);
+    var added_books = []
+    for(var i = 0; i < selected.length; i++){
+      for(var j = 0; j < queryResult.length;j++){
+        if (selected[i] == queryResult[j].etag){
+          added_books.push(queryResult[j]);//Add the object with all the book information
+          console.log("Added ", queryResult[j].volumeInfo.title)
+        }
+      }
+
+    }
 
 
   };//This function will handle the backend call to add the books to the list for this user
