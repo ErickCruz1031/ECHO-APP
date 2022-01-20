@@ -28,4 +28,10 @@ app.get('/userlist', function (req, res) {
     res.send(JSON.stringify({data: "THIS IS THE userlist"}));
 });
 
+app.get('/addbook', function (req, res) {
+    console.log("Got the request to add book")
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({data: "Hello from Addbook!"}));
+});
+
 app.listen(port);
