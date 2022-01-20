@@ -32,6 +32,7 @@ import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
+import { useAuth0 } from "@auth0/auth0-react";
 import USERLIST from '../_mocks_/user';
 
 // ----------------------------------------------------------------------
@@ -77,6 +78,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function SearchView({inputString}) {
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -85,15 +87,13 @@ export default function SearchView({inputString}) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
- 
+  const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
+
   useEffect(() =>{
     console.log("We are here in the SearchView with ", inputString);
-    //console.log("These are the props from the state: \n", state)
     //TODO: Call Google Books API with the input as the parameter for the query
      const callBooksAPI = async () =>{
-       console.log("Calling the books API");
-       
-      //const query = `https://www.googleapis.com/books/v1/volumes?q=subject:nonfiction&key=${booksKey}`
+      console.log("Calling the books API");
       const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
       console.log("The query in this component is ", query);
       const res = await fetch(query);
@@ -101,18 +101,31 @@ export default function SearchView({inputString}) {
       console.log("This is the data from the books API:\n ", data);
       setResult(data.items);
 
-      //setOpen(false);
-      //navigate('/dashboard/search');//Testing this
       //TODO: Moving the API call to the the moment that we mount the Search View component
+     }//Call Google API to fetch information
+
+     const callAPI = async () =>{
+      const domain = "dev--hn8vcuo.us.auth0.com";
+      const accessToken = await getAccessTokenSilently({
+        audience: `https://userAuth.com`,
+        scope: "read:user",
+      });
+      console.log("This is the token: ", accessToken);
+      setBearer(accessToken);
+    }
 
 
-     }
+
+     console.log("THE USER IN SEARCHVIEW IS ", user);
      console.log("Called to mount")
+     //TODO: Might have to change this so that we can handle resubmissions for the search
+  
      if (queryResult.length == 0 && inputString != null){
       callBooksAPI();
+      callAPI();
      }
      
- 
+  //Maybe add a dependency on inputString?
   })
 
   const handleRequestSort = (event, property) => {
@@ -178,8 +191,22 @@ export default function SearchView({inputString}) {
           console.log("Added ", queryResult[j].volumeInfo.title)
         }
       }
+    }//Loop to contruct the objects being added in the backend 
+
+    const addCall = async () =>{
+      const response = await fetch(`http://localhost:8080/addbook`,{
+        headers:{
+          "Content-Type": 'application/json',
+          "Accept": 'application/json',
+          "Authorization": `Bearer ${bearerToken}`
+          
+        }
+      })
+      const data = await response.json();
+      console.log("This is the response: ", data);
 
     }
+    addCall();//Call the backend to add objects to MongoDB 
 
 
   };//This function will handle the backend call to add the books to the list for this user
