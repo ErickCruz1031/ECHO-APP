@@ -6,6 +6,38 @@ const cors = require('cors');
 var bodyParser = require('body-parser')
 const util = require('util')
 
+//Items to connect to MongoDB
+const { MongoClient } = require('mongodb');
+const uri = "mongodb+srv://su:123Pass@cluster0.zvww5.mongodb.net/eco?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+//Function to add book record for user
+async function runMongoAdd(bookObject, user) {
+
+    try {
+      await client.connect();
+      const database = client.db("eco");
+      const userlist = database.collection("userlist");
+      // create a document to insert
+      for(const index in bookObject){
+        console.log("Title for this one is ", bookObject[index].volumeInfo.title, "\n");
+        const book = {
+            title: bookObject[index].volumeInfo.title,
+            author: bookObject[index].volumeInfo.authors,
+            date_added: bookObject[index].volumeInfo.publishedDate,
+            username: user
+    
+        }
+        const result = await userlist.insertOne(book);
+        console.log(`A document was inserted with the _id: ${result.insertedId}`);
+      }
+
+    } finally {
+      await client.close();
+    }
+}
+
+
 var port = process.env.PORT || 8080;
 
 var jsonParser = bodyParser.json()
@@ -43,13 +75,16 @@ app.get('/readbook', function (req, res) {
 
 app.post('/addbook', function (req, res) {
     var data = req.body;
-    console.log("Got the request to add book");
+    console.log("Got the request to add book with this object: \n", req.body);
+    console.log("This is the username for the user ", req.body.username);
     console.log("Going into the loop");
 
     //This loops goes through the index in the books object
     for(const index in data.books){
         console.log("Title for this one is ", data.books[index].volumeInfo.title, "\n\n\n");
     }
+    runMongoAdd(data.books, req.body.username); //Call the function to add 
+
 
     res.setHeader('Content-Type', 'application/json');
     res.send(req.body);
