@@ -44,10 +44,13 @@ app.get('/readbook', function (req, res) {
 app.post('/addbook', function (req, res) {
     var data = req.body;
     console.log("Got the request to add book");
-    console.log("These is the body of the request: ", data);
-    console.log("These is the body of the request: ", req.body.books[0].etag);
-    console.log(util.inspect(req.body.books, {showHidden: false, depth: null, colors: true}))
-    console.log(JSON.stringify(req.body.books, null, 2))
+    console.log("Going into the loop");
+
+    //This loops goes through the index in the books object
+    for(const index in data.books){
+        console.log("Title for this one is ", data.books[index].volumeInfo.title, "\n\n\n");
+    }
+
     res.setHeader('Content-Type', 'application/json');
     res.send(req.body);
 });
