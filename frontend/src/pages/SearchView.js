@@ -126,7 +126,7 @@ export default function SearchView({inputString}) {
      }
      
   //Maybe add a dependency on inputString?
-  })
+  }, [inputString]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -194,14 +194,23 @@ export default function SearchView({inputString}) {
     }//Loop to contruct the objects being added in the backend 
 
     const addCall = async () =>{
+      var new_object = Object.assign({}, added_books);
+      console.log("This is the arguments being added ", new_object);
+
       const response = await fetch(`http://localhost:8080/addbook`,{
+        method: 'POST',
         headers:{
+          "Authorization": `Bearer ${bearerToken}`,
           "Content-Type": 'application/json',
-          "Accept": 'application/json',
-          "Authorization": `Bearer ${bearerToken}`
+          "Accept": 'application/json'
           
-        }
-      })
+          
+        },
+        body:JSON.stringify({
+          books: new_object
+        })
+      });//Backend call to add the array of books into the MongoDB instance
+
       const data = await response.json();
       console.log("This is the response: ", data);
 
