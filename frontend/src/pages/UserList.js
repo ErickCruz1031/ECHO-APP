@@ -92,47 +92,50 @@ export default function UserList() {
   useEffect(() =>{
     console.log("We are here in the User List");
     //TODO: This will be the call that queries the MongoDB for user list
-     const callBooksAPI = async () =>{
-       console.log("Calling the books API");
-       /*
-       
-      //const query = `https://www.googleapis.com/books/v1/volumes?q=subject:nonfiction&key=${booksKey}`
-      const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
-      console.log("The query in this component is ", query);
-      const res = await fetch(query);
-      const data = await res.json();
-      console.log("This is the data from the books API:\n ", data);
-      setResult(data.items);
-      */ 
 
-      //setOpen(false);
-      //navigate('/dashboard/search');//Testing this
-      //TODO: Moving the API call to the the moment that we mount the Search View component
+    const queryCall = async (token) =>{
+      console.log("This is the user that we are looking for ", user.username);
+
+      const response = await fetch(`http://localhost:8080/userlist`,{
+        method: 'GET',
+        headers:{
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+          
+          
+        }
+      });//Backend call to get the userlist for this user
+
+      const data = await response.json();
+      console.log("This is the list for this current user: ", data);
+
+    }//Backend call to get the userlist for current user
 
 
-     }
 
-     const callAPI = async () =>{
-      const domain = "dev--hn8vcuo.us.auth0.com";
-      const accessToken = await getAccessTokenSilently({
-        audience: `https://userAuth.com`,
-        scope: "read:user",
-      });
-      console.log("This is the token: ", accessToken);
-      setBearer(accessToken);
-      }//Call to get the Bearer token to make backend API calls
+    const callAPI = async () =>{
+    const domain = "dev--hn8vcuo.us.auth0.com";
+    const accessToken = await getAccessTokenSilently({
+      audience: `https://userAuth.com`,
+      scope: "read:user",
+    });
+    console.log("This is the token: ", accessToken);
+    setBearer(accessToken);
+    queryCall(accessToken);//Call the backend call with the new bearer token
+    }//Call to get the Bearer token to make backend API calls
 
 
      console.log("Called to mount the UserList")
      console.log("The user in UserList is the following: ", user)
-     /*
-     if (queryResult.length == 0 && inputString != null){
-      callBooksAPI();
+     
+     if (queryResult.length == 0){
+      callAPI(); //Get the bearer token and then call backend call
      }
-     */
+     
      
  
-  })
+  },[]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -186,6 +189,12 @@ export default function UserList() {
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
   };
+
+
+  const handleRefresh = e =>{
+    console.log("We are calling backend function to retrieve documents");
+
+  }//Function to handle the refresh 
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 

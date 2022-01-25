@@ -59,8 +59,7 @@ async function queryItems(user) {
     } finally {
       await client.close();
     }
-  }
-  run().catch(console.dir);
+}
 
 
 
