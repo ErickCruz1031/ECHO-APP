@@ -88,10 +88,38 @@ app.use(cors());
 app.use(jwtCheck);
 
 
-app.get('/userlist', function (req, res) {
-    console.log("Got the request for userlist")
+app.post('/userlist', function (req, res) {
+    console.log("Got the request for userlist with this body :", req.body)
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({data: "THIS IS THE userlist"}));
+
+
+    async function queryItems(user) {
+        try {
+          await client.connect();
+          const database = client.db("eco");
+          const userlist = database.collection("userlist");
+          // query for movies that have a runtime less than 15 minutes
+          const query = { username: user }; //Look for the items in this collection that belong to this user
+    
+    
+          const cursor = userlist.find(query, options);
+          // print a message if no documents were found
+          if ((await cursor.count()) === 0) {
+            console.log("No documents found!");
+          }
+          // replace console.dir with your callback to access individual elements
+          await cursor.forEach(function(obj){
+              console.log("This is one of the items returned: ", obj, "\n\n\n\n");
+          });
+        } finally {
+          await client.close();
+          res.send(JSON.stringify({data: cursor}));
+        }
+    }
+
+    queryItems(req.body.username);
+
+
 });
 
 app.get('/readbook', function (req, res) {

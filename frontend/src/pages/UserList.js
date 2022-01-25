@@ -94,17 +94,20 @@ export default function UserList() {
     //TODO: This will be the call that queries the MongoDB for user list
 
     const queryCall = async (token) =>{
-      console.log("This is the user that we are looking for ", user.username);
+      console.log("This is the user that we are looking for ", user.nickname);
 
       const response = await fetch(`http://localhost:8080/userlist`,{
-        method: 'GET',
+        method: 'POST',
         headers:{
           "Authorization": `Bearer ${token}`,
           "Content-Type": 'application/json',
           "Accept": 'application/json'
           
           
-        }
+        },
+        body:JSON.stringify({
+          username: user.nickname
+        })
       });//Backend call to get the userlist for this user
 
       const data = await response.json();
