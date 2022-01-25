@@ -112,7 +112,7 @@ export default function SearchView({inputString}) {
       });
       console.log("This is the token: ", accessToken);
       setBearer(accessToken);
-    }
+      }
 
 
 

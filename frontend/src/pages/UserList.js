@@ -33,6 +33,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
+import { useAuth0 } from "@auth0/auth0-react";
 
 // ----------------------------------------------------------------------
 
@@ -77,6 +78,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserList() {
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -85,7 +87,8 @@ export default function UserList() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
- 
+  const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
+
   useEffect(() =>{
     console.log("We are here in the User List");
     //TODO: This will be the call that queries the MongoDB for user list
@@ -108,7 +111,20 @@ export default function UserList() {
 
 
      }
-     console.log("Called to mount")
+
+     const callAPI = async () =>{
+      const domain = "dev--hn8vcuo.us.auth0.com";
+      const accessToken = await getAccessTokenSilently({
+        audience: `https://userAuth.com`,
+        scope: "read:user",
+      });
+      console.log("This is the token: ", accessToken);
+      setBearer(accessToken);
+      }//Call to get the Bearer token to make backend API calls
+
+
+     console.log("Called to mount the UserList")
+     console.log("The user in UserList is the following: ", user)
      /*
      if (queryResult.length == 0 && inputString != null){
       callBooksAPI();
@@ -189,8 +205,8 @@ export default function UserList() {
               component={RouterLink}
               to="#"
               startIcon={<Icon icon={plusFill} />}
-            >
-              New User
+            > 
+              Refresh List
             </Button>
           </Stack>
   
