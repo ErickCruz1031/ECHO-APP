@@ -33,6 +33,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
+import { useAuth0 } from "@auth0/auth0-react";
 
 // ----------------------------------------------------------------------
 
@@ -77,6 +78,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserList() {
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -85,38 +87,58 @@ export default function UserList() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
- 
+  const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
+
   useEffect(() =>{
     console.log("We are here in the User List");
     //TODO: This will be the call that queries the MongoDB for user list
-     const callBooksAPI = async () =>{
-       console.log("Calling the books API");
-       /*
-       
-      //const query = `https://www.googleapis.com/books/v1/volumes?q=subject:nonfiction&key=${booksKey}`
-      const query = `https://www.googleapis.com/books/v1/volumes?q=intitle:${inputString}&key=${booksKey}`
-      console.log("The query in this component is ", query);
-      const res = await fetch(query);
-      const data = await res.json();
-      console.log("This is the data from the books API:\n ", data);
-      setResult(data.items);
-      */ 
 
-      //setOpen(false);
-      //navigate('/dashboard/search');//Testing this
-      //TODO: Moving the API call to the the moment that we mount the Search View component
+    const queryCall = async (token) =>{
+      console.log("This is the user that we are looking for ", user.nickname);
+
+      const response = await fetch(`http://localhost:8080/userlist`,{
+        method: 'POST',
+        headers:{
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+          
+          
+        },
+        body:JSON.stringify({
+          username: user.nickname
+        })
+      });//Backend call to get the userlist for this user
+
+      const data = await response.json();
+      console.log("This is the list for this current user: ", data);
+
+    }//Backend call to get the userlist for current user
 
 
+
+    const callAPI = async () =>{
+    const domain = "dev--hn8vcuo.us.auth0.com";
+    const accessToken = await getAccessTokenSilently({
+      audience: `https://userAuth.com`,
+      scope: "read:user",
+    });
+    console.log("This is the token: ", accessToken);
+    setBearer(accessToken);
+    queryCall(accessToken);//Call the backend call with the new bearer token
+    }//Call to get the Bearer token to make backend API calls
+
+
+     console.log("Called to mount the UserList")
+     console.log("The user in UserList is the following: ", user)
+     
+     if (queryResult.length == 0){
+      callAPI(); //Get the bearer token and then call backend call
      }
-     console.log("Called to mount")
-     /*
-     if (queryResult.length == 0 && inputString != null){
-      callBooksAPI();
-     }
-     */
+     
      
  
-  })
+  },[]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -171,6 +193,12 @@ export default function UserList() {
     setFilterName(event.target.value);
   };
 
+
+  const handleRefresh = e =>{
+    console.log("We are calling backend function to retrieve documents");
+
+  }//Function to handle the refresh 
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -189,8 +217,8 @@ export default function UserList() {
               component={RouterLink}
               to="#"
               startIcon={<Icon icon={plusFill} />}
-            >
-              New User
+            > 
+              Refresh List
             </Button>
           </Stack>
   

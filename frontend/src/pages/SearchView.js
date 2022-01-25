@@ -112,7 +112,7 @@ export default function SearchView({inputString}) {
       });
       console.log("This is the token: ", accessToken);
       setBearer(accessToken);
-    }
+      }
 
 
 
@@ -207,7 +207,8 @@ export default function SearchView({inputString}) {
           
         },
         body:JSON.stringify({
-          books: new_object
+          books: new_object,
+          username: user.nickname
         })
       });//Backend call to add the array of books into the MongoDB instance
 
