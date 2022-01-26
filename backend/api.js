@@ -38,7 +38,7 @@ async function runMongoAdd(bookObject, user) {
 }
 
 
-async function queryItems(user) {
+async function queryItemsTwo(user) {
     try {
       await client.connect();
       const database = client.db("eco");
@@ -102,18 +102,24 @@ app.post('/userlist', function (req, res) {
           const query = { username: user }; //Look for the items in this collection that belong to this user
     
     
-          const cursor = userlist.find(query, options);
+          const cursor = userlist.find(query);
           // print a message if no documents were found
           if ((await cursor.count()) === 0) {
             console.log("No documents found!");
           }
           // replace console.dir with your callback to access individual elements
+          var sendObj = []
           await cursor.forEach(function(obj){
               console.log("This is one of the items returned: ", obj, "\n\n\n\n");
+              sendObj.push(obj);
           });
-        } finally {
-          await client.close();
-          res.send(JSON.stringify({data: cursor}));
+          await client.close();   
+          res.json({data: sendObj});
+        } catch(err){
+            console.log(err);
+            await client.close();   
+            res.send("THis ended up in an error")
+
         }
     }
 
