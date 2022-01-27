@@ -5,6 +5,7 @@ var jwks = require('jwks-rsa');
 const cors = require('cors');
 var bodyParser = require('body-parser')
 const util = require('util')
+var ObjectId = require('mongodb').ObjectId; 
 
 //Items to connect to MongoDB
 const { MongoClient } = require('mongodb');
@@ -21,10 +22,23 @@ async function runMongoAdd(bookObject, user) {
       // create a document to insert
       for(const index in bookObject){
         console.log("Title for this one is ", bookObject[index].volumeInfo.title, "\n");
+
+        var thumbnailURL;
+
+        if(bookObject[index].volumeInfo.hasOwnProperty('imageLinks')){
+            thumbnailURL = bookObject[index].volumeInfo.imageLinks.smallThumbnail;
+        }
+        else{
+            thumbnailURL = "";//If there is no URL leave it NULL
+        }
+
         const book = {
             title: bookObject[index].volumeInfo.title,
             author: bookObject[index].volumeInfo.authors,
             date_added: bookObject[index].volumeInfo.publishedDate,
+            category: bookObject[index].volumeInfo.categories,
+            thumbnail: thumbnailURL,
+            currently_reading: "No",
             username: user
     
         }
@@ -32,32 +46,9 @@ async function runMongoAdd(bookObject, user) {
         console.log(`A document was inserted with the _id: ${result.insertedId}`);
       }
 
-    } finally {
-      await client.close();
-    }
-}
+    } catch(err){
+        console.log(err); 
 
-
-async function queryItemsTwo(user) {
-    try {
-      await client.connect();
-      const database = client.db("eco");
-      const userlist = database.collection("userlist");
-      // query for movies that have a runtime less than 15 minutes
-      const query = { username: user }; //Look for the items in this collection that belong to this user
-
-
-      const cursor = userlist.find(query, options);
-      // print a message if no documents were found
-      if ((await cursor.count()) === 0) {
-        console.log("No documents found!");
-      }
-      // replace console.dir with your callback to access individual elements
-      await cursor.forEach(function(obj){
-          console.log("This is one of the items returned: ", obj, "\n\n\n\n");
-      });
-    } finally {
-      await client.close();
     }
 }
 
@@ -98,26 +89,24 @@ app.post('/userlist', function (req, res) {
           await client.connect();
           const database = client.db("eco");
           const userlist = database.collection("userlist");
-          // query for movies that have a runtime less than 15 minutes
+          //Query the entries that match this username 
           const query = { username: user }; //Look for the items in this collection that belong to this user
     
     
           const cursor = userlist.find(query);
-          // print a message if no documents were found
+          //Print a message if no documents were found
           if ((await cursor.count()) === 0) {
             console.log("No documents found!");
           }
-          // replace console.dir with your callback to access individual elements
+
           var sendObj = []
           await cursor.forEach(function(obj){
               console.log("This is one of the items returned: ", obj, "\n\n\n\n");
               sendObj.push(obj);
-          });
-          await client.close();   
+          });  
           res.json({data: sendObj});
         } catch(err){
-            console.log(err);
-            await client.close();   
+            console.log(err); 
             res.send("THis ended up in an error")
 
         }
@@ -149,6 +138,43 @@ app.post('/addbook', function (req, res) {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(req.body);
+});
+
+app.post('/removebook', function(req, res){
+
+    console.log("Removing book with request body: ", req.body);
+    res.send("Returning from Delete")
+    async function removeBook() {
+        try {
+          await client.connect();
+          const database = client.db("eco");
+          const collection = database.collection("userlist");
+          // Query for a movie that has title "Annie Hall"
+          const query = { title: req.body.title };
+
+          const result = await collection.deleteOne(query);
+          if (result.deletedCount === 1) {
+            console.log("Successfully deleted one document.");
+            res.send("Successfully deleted one document.");
+          } else {
+            console.log("No documents matched the query. Deleted 0 documents.");
+            res.send("No documents matched the query. Deleted 0 documents.")
+          }
+        } catch(err){
+            console.log(err); 
+            res.send("This deletion ended up in an error")
+
+        }
+      }
+      //removeBook();
+      /*
+        var ObjectId = require('mongodb').ObjectId; 
+        var id = req.params.gonderi_id;       
+        var o_id = new ObjectId(id);
+        db.test.find({_id:o_id})
+
+        To use to search for ID
+      */
 });
 
 app.listen(port);

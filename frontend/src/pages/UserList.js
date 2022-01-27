@@ -30,7 +30,7 @@ import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import { UserListHead, UserListToolbar, UserMoreMenuList } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -110,8 +110,9 @@ export default function UserList() {
         })
       });//Backend call to get the userlist for this user
 
-      const data = await response.json();
-      console.log("This is the list for this current user: ", data);
+      const content = await response.json();
+      console.log("This is the list for this current user: ", content.data);
+      setResult(content.data);// Set the variable state
 
     }//Backend call to get the userlist for current user
 
@@ -193,19 +194,56 @@ export default function UserList() {
     setFilterName(event.target.value);
   };
 
+  const handleDelete = bookID =>{
+    console.log("Pressed the delete button from Userlist with ID ", bookID);
+
+    const deleteCall = async () =>{
+      console.log("This is the arguments being added ", bookID);
+
+      const response = await fetch(`http://localhost:8080/removebook`,{
+        method: 'POST',
+        headers:{
+          "Authorization": `Bearer ${bearerToken}`,
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+          
+          
+        },
+        body:JSON.stringify({
+          username: user.nickname,
+          id: bookID
+        })
+      });//Backend call to add the array of books into the MongoDB instance
+
+      const data = await response.json();
+      console.log("This is the response: ", data);
+
+    }
+
+    deleteCall();
+  }
+
 
   const handleRefresh = e =>{
     console.log("We are calling backend function to retrieve documents");
 
   }//Function to handle the refresh 
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - queryResult.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
+
+    <>
+      { (queryResult.length == 0) ?
+                              
+      <Box sx={{ width: '100%' }}>
+        <LinearProgress />
+      </Box>
+      :
       <Page title="User List| Minimal-UI">
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -236,22 +274,33 @@ export default function UserList() {
                     order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
-                    rowCount={USERLIST.length}
+                    rowCount={queryResult.length}
                     numSelected={selected.length}
                     onRequestSort={handleRequestSort}
                     onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
-                    {filteredUsers
+                    {queryResult
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row) => {
-                        const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                        const isItemSelected = selected.indexOf(name) !== -1;
+                        //const { id, name, role, status, company, avatarUrl, isVerified } = row;
+
+
+                        const title = row.title;
+                        const author = row.author;
+                        const category = row.category;
+                        const date_added = row.date_added;
+                        const currently_reading = row.currently_reading
+                        const image_url = row.thumbnail;//Need to change this
+                        const marker = row._id;
+                        console.log("MAPPING THE USERLIST OBJECTS RIGHT NOW");
+
+                        const isItemSelected = selected.indexOf(title) !== -1;
   
                         return (
                           <TableRow
                             hover
-                            key={id}
+                            key={marker}
                             tabIndex={-1}
                             role="checkbox"
                             selected={isItemSelected}
@@ -260,31 +309,31 @@ export default function UserList() {
                             <TableCell padding="checkbox">
                               <Checkbox
                                 checked={isItemSelected}
-                                onChange={(event) => handleClick(event, name)}
+                                onChange={(event) => handleClick(event, title)}
                               />
                             </TableCell>
                             <TableCell component="th" scope="row" padding="none">
                               <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={name} src={avatarUrl} />
+                                <Avatar alt={title} src={image_url} />
                                 <Typography variant="subtitle2" noWrap>
-                                  {name}
+                                  {title}
                                 </Typography>
                               </Stack>
                             </TableCell>
-                            <TableCell align="left">{company}</TableCell>
-                            <TableCell align="left">{role}</TableCell>
-                            <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                            <TableCell align="left">{author}</TableCell>
+                            <TableCell align="left">{category}</TableCell>
+                            <TableCell align="left">{date_added}</TableCell>
                             <TableCell align="left">
                               <Label
                                 variant="ghost"
-                                color={(status === 'banned' && 'error') || 'success'}
+                                color={(currently_reading === 'banned' && 'error') || 'success'}
                               >
-                                {sentenceCase(status)}
+                                {currently_reading}
                               </Label>
                             </TableCell>
   
                             <TableCell align="right">
-                              <UserMoreMenu />
+                              <UserMoreMenuList deleteFunc={handleDelete} id={marker}/>
                             </TableCell>
                           </TableRow>
                         );
@@ -320,6 +369,8 @@ export default function UserList() {
           </Card>
         </Container>
       </Page>
+      }
+    </>
   );
 }
 
