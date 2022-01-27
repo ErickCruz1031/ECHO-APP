@@ -52,30 +52,6 @@ async function runMongoAdd(bookObject, user) {
 }
 
 
-async function queryItemsTwo(user) {
-    try {
-      await client.connect();
-      const database = client.db("eco");
-      const userlist = database.collection("userlist");
-      // query for movies that have a runtime less than 15 minutes
-      const query = { username: user }; //Look for the items in this collection that belong to this user
-
-
-      const cursor = userlist.find(query, options);
-      // print a message if no documents were found
-      if ((await cursor.count()) === 0) {
-        console.log("No documents found!");
-      }
-      // replace console.dir with your callback to access individual elements
-      await cursor.forEach(function(obj){
-          console.log("This is one of the items returned: ", obj, "\n\n\n\n");
-      });
-    } finally {
-      await client.close();
-    }
-}
-
-
 
 
 
@@ -161,6 +137,34 @@ app.post('/addbook', function (req, res) {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(req.body);
+});
+
+app.post('/removebook', function(req, res){
+
+    console.log("Removing book with request body: ", req.body);
+    async function removeBook() {
+        try {
+          await client.connect();
+          const database = client.db("eco");
+          const collection = database.collection("userlist");
+          // Query for a movie that has title "Annie Hall"
+          const query = { title: req.body.title };
+
+          const result = await collection.deleteOne(query);
+          if (result.deletedCount === 1) {
+            console.log("Successfully deleted one document.");
+            res.send("Successfully deleted one document.");
+          } else {
+            console.log("No documents matched the query. Deleted 0 documents.");
+            res.send("No documents matched the query. Deleted 0 documents.")
+          }
+        } catch(err){
+            console.log(err); 
+            res.send("This deletion ended up in an error")
+
+        }
+      }
+      //removeBook();
 });
 
 app.listen(port);

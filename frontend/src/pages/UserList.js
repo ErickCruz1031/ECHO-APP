@@ -30,7 +30,7 @@ import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import { UserListHead, UserListToolbar, UserMoreMenuList } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -304,7 +304,7 @@ export default function UserList() {
                             </TableCell>
   
                             <TableCell align="right">
-                              <UserMoreMenu />
+                              <UserMoreMenuList />
                             </TableCell>
                           </TableRow>
                         );
