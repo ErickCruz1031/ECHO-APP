@@ -5,6 +5,7 @@ var jwks = require('jwks-rsa');
 const cors = require('cors');
 var bodyParser = require('body-parser')
 const util = require('util')
+var ObjectId = require('mongodb').ObjectId; 
 
 //Items to connect to MongoDB
 const { MongoClient } = require('mongodb');
@@ -142,6 +143,7 @@ app.post('/addbook', function (req, res) {
 app.post('/removebook', function(req, res){
 
     console.log("Removing book with request body: ", req.body);
+    res.send("Returning from Delete")
     async function removeBook() {
         try {
           await client.connect();
@@ -165,6 +167,14 @@ app.post('/removebook', function(req, res){
         }
       }
       //removeBook();
+      /*
+        var ObjectId = require('mongodb').ObjectId; 
+        var id = req.params.gonderi_id;       
+        var o_id = new ObjectId(id);
+        db.test.find({_id:o_id})
+
+        To use to search for ID
+      */
 });
 
 app.listen(port);

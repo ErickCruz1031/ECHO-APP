@@ -9,9 +9,10 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenuList() {
+export default function UserMoreMenuList({deleteFunc, id}) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
 
   return (
     <>
@@ -29,7 +30,7 @@ export default function UserMoreMenuList() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem sx={{ color: 'text.secondary' }} onClick = {() => deleteFunc(id)}>
           <ListItemIcon>
             <Icon icon={trash2Outline} width={24} height={24} />
           </ListItemIcon>

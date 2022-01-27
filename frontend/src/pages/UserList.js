@@ -194,6 +194,35 @@ export default function UserList() {
     setFilterName(event.target.value);
   };
 
+  const handleDelete = bookID =>{
+    console.log("Pressed the delete button from Userlist with ID ", bookID);
+
+    const deleteCall = async () =>{
+      console.log("This is the arguments being added ", bookID);
+
+      const response = await fetch(`http://localhost:8080/removebook`,{
+        method: 'POST',
+        headers:{
+          "Authorization": `Bearer ${bearerToken}`,
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+          
+          
+        },
+        body:JSON.stringify({
+          username: user.nickname,
+          id: bookID
+        })
+      });//Backend call to add the array of books into the MongoDB instance
+
+      const data = await response.json();
+      console.log("This is the response: ", data);
+
+    }
+
+    deleteCall();
+  }
+
 
   const handleRefresh = e =>{
     console.log("We are calling backend function to retrieve documents");
@@ -304,7 +333,7 @@ export default function UserList() {
                             </TableCell>
   
                             <TableCell align="right">
-                              <UserMoreMenuList />
+                              <UserMoreMenuList deleteFunc={handleDelete} id={marker}/>
                             </TableCell>
                           </TableRow>
                         );
