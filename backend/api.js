@@ -21,11 +21,22 @@ async function runMongoAdd(bookObject, user) {
       // create a document to insert
       for(const index in bookObject){
         console.log("Title for this one is ", bookObject[index].volumeInfo.title, "\n");
+
+        var thumbnailURL;
+
+        if(bookObject[index].volumeInfo.hasOwnProperty('imageLinks')){
+            thumbnailURL = bookObject[index].volumeInfo.imageLinks.smallThumbnail;
+        }
+        else{
+            thumbnailURL = "";//If there is no URL leave it NULL
+        }
+
         const book = {
             title: bookObject[index].volumeInfo.title,
             author: bookObject[index].volumeInfo.authors,
             date_added: bookObject[index].volumeInfo.publishedDate,
             category: bookObject[index].volumeInfo.categories,
+            thumbnail: thumbnailURL,
             currently_reading: "No",
             username: user
     
@@ -34,8 +45,9 @@ async function runMongoAdd(bookObject, user) {
         console.log(`A document was inserted with the _id: ${result.insertedId}`);
       }
 
-    } finally {
-      await client.close();
+    } catch(err){
+        console.log(err); 
+
     }
 }
 

@@ -262,7 +262,7 @@ export default function UserList() {
                         const category = row.category;
                         const date_added = row.date_added;
                         const currently_reading = row.currently_reading
-                        const image_url = "";//Need to change this
+                        const image_url = row.thumbnail;//Need to change this
                         const marker = row._id;
                         console.log("MAPPING THE USERLIST OBJECTS RIGHT NOW");
 
