@@ -13,6 +13,12 @@ export default function UserMoreMenuList({deleteFunc, id}) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleDelete = () =>{
+    setIsOpen(false); //Close the item menu when we click delete
+    deleteFunc(id); //Call the parent function to actually call backend and delete the item with matching ID
+
+  }
+
 
   return (
     <>
@@ -30,7 +36,7 @@ export default function UserMoreMenuList({deleteFunc, id}) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} onClick = {() => deleteFunc(id)}>
+        <MenuItem sx={{ color: 'text.secondary' }} onClick = {handleDelete}>
           <ListItemIcon>
             <Icon icon={trash2Outline} width={24} height={24} />
           </ListItemIcon>
