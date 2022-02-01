@@ -123,6 +123,7 @@ app.get('/readbook', function (req, res) {
     res.send(JSON.stringify({data: "Hello from Addbook!"}));
 });
 
+
 app.post('/addbook', function (req, res) {
     var data = req.body;
     console.log("Got the request to add book with this object: \n", req.body);
@@ -143,30 +144,31 @@ app.post('/addbook', function (req, res) {
 app.post('/removebook', function(req, res){
 
     console.log("Removing book with request body: ", req.body);
-    res.send("Returning from Delete")
+    //res.json({message : "Returning from Delete"})
     async function removeBook() {
         try {
           await client.connect();
           const database = client.db("eco");
           const collection = database.collection("userlist");
           // Query for a movie that has title "Annie Hall"
-          const query = { title: req.body.title };
+          const delete_Obj = new ObjectId(req.body.id);//Make an id object with the if passed from the frontend
+          const query = { _id : delete_Obj}; //Search for the object with a matching ID
 
           const result = await collection.deleteOne(query);
           if (result.deletedCount === 1) {
             console.log("Successfully deleted one document.");
-            res.send("Successfully deleted one document.");
+            res.json({status : "Successfully deleted one document."});
           } else {
             console.log("No documents matched the query. Deleted 0 documents.");
-            res.send("No documents matched the query. Deleted 0 documents.")
+            res.json({status :"No documents matched the query. Deleted 0 documents."})
           }
         } catch(err){
             console.log(err); 
-            res.send("This deletion ended up in an error")
+            res.json({status : "This deletion ended up in an error"})
 
         }
       }
-      //removeBook();
+      removeBook();
       /*
         var ObjectId = require('mongodb').ObjectId; 
         var id = req.params.gonderi_id;       
