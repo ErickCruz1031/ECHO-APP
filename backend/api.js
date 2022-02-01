@@ -106,7 +106,7 @@ app.post('/userlist', function (req, res) {
           });  
           res.json({data: sendObj});
         } catch(err){
-            console.log(err); 
+            console.log(err);
             res.send("THis ended up in an error")
 
         }
@@ -122,6 +122,7 @@ app.get('/readbook', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({data: "Hello from Addbook!"}));
 });
+
 
 app.post('/addbook', function (req, res) {
     var data = req.body;
@@ -143,30 +144,57 @@ app.post('/addbook', function (req, res) {
 app.post('/removebook', function(req, res){
 
     console.log("Removing book with request body: ", req.body);
-    res.send("Returning from Delete")
+    //res.json({message : "Returning from Delete"})
     async function removeBook() {
         try {
           await client.connect();
           const database = client.db("eco");
           const collection = database.collection("userlist");
           // Query for a movie that has title "Annie Hall"
-          const query = { title: req.body.title };
+          const delete_Obj = new ObjectId(req.body.id);//Make an id object with the if passed from the frontend
+          const query = { _id : delete_Obj}; //Search for the object with a matching ID
+          const queryTwo = {username: req.body.username};//Going to query a second time to get the updated list of books for user
+
 
           const result = await collection.deleteOne(query);
           if (result.deletedCount === 1) {
-            console.log("Successfully deleted one document.");
-            res.send("Successfully deleted one document.");
+            console.log("Successfully deleted one document. Querying for updated user list");
+            //Now we return the updated list of user books
+            const cursor = collection.find(queryTwo);
+            //Print a message if no documents were found
+            if ((await cursor.count()) === 0) {
+                console.log("No documents found!");
+            }
+            var sendObj = []
+            await cursor.forEach(function(obj){
+                console.log("This is one of the items returned: ", obj, "\n\n\n\n");
+                sendObj.push(obj);
+            });  
+            //res.json({data: sendObj});
+            res.json({status : "Successfully deleted one document.", data: sendObj});
           } else {
             console.log("No documents matched the query. Deleted 0 documents.");
-            res.send("No documents matched the query. Deleted 0 documents.")
+            const cursor = collection.find(queryTwo);
+            //Print a message if no documents were found
+            if ((await cursor.count()) === 0) {
+                console.log("No documents found!");
+            }
+            var sendObj = []
+            await cursor.forEach(function(obj){
+                console.log("This is one of the items returned: ", obj, "\n\n\n\n");
+                sendObj.push(obj);
+            });  
+            //res.json({data: sendObj});
+            res.json({status : "No documents matched the query. Deleted 0 documents.", data: sendObj});
+            //res.json({status :"No documents matched the query. Deleted 0 documents."})
           }
         } catch(err){
             console.log(err); 
-            res.send("This deletion ended up in an error")
+            res.json({status : "This deletion ended up in an error"})
 
         }
       }
-      //removeBook();
+      removeBook();
       /*
         var ObjectId = require('mongodb').ObjectId; 
         var id = req.params.gonderi_id;       
