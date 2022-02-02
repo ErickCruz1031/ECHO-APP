@@ -220,8 +220,10 @@ export default function UserList() {
         })
       });//Backend call to add the array of books into the MongoDB instance
 
-      const data = await response.json();
-      console.log("This is the response: ", data);
+      const result = await response.json();
+      console.log("This is the response: ", result);
+      setResult(result.data);//Update the array being displayed with the new contents
+
 
     }
 
@@ -255,14 +257,6 @@ export default function UserList() {
             <Typography variant="h4" gutterBottom>
               User Book List
             </Typography>
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="#"
-              startIcon={<Icon icon={plusFill} />}
-            > 
-              Refresh List
-            </Button>
           </Stack>
   
           <Card>
