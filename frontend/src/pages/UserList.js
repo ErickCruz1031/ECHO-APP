@@ -24,6 +24,9 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+
 
 // components
 import Page from '../components/Page';
@@ -88,6 +91,7 @@ export default function UserList() {
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
+  const [searchingState, setSearchState] = useState(true);//Will tell us if we're fetching the list which we are in the beginning 
 
   useEffect(() =>{
     console.log("We are here in the User List");
@@ -113,6 +117,7 @@ export default function UserList() {
       const content = await response.json();
       console.log("This is the list for this current user: ", content.data);
       setResult(content.data);// Set the variable state
+      setSearchState(false);//Turn off the loading component
 
     }//Backend call to get the userlist for current user
 
@@ -133,7 +138,7 @@ export default function UserList() {
      console.log("Called to mount the UserList")
      console.log("The user in UserList is the following: ", user)
      
-     if (queryResult.length == 0){
+     if (queryResult.length == 0 && searchingState == true){
       callAPI(); //Get the bearer token and then call backend call
      }
      
@@ -215,8 +220,10 @@ export default function UserList() {
         })
       });//Backend call to add the array of books into the MongoDB instance
 
-      const data = await response.json();
-      console.log("This is the response: ", data);
+      const result = await response.json();
+      console.log("This is the response: ", result);
+      setResult(result.data);//Update the array being displayed with the new contents
+
 
     }
 
@@ -238,7 +245,7 @@ export default function UserList() {
   return (
 
     <>
-      { (queryResult.length == 0) ?
+      { (searchingState == true)?
                               
       <Box sx={{ width: '100%' }}>
         <LinearProgress />
@@ -250,14 +257,6 @@ export default function UserList() {
             <Typography variant="h4" gutterBottom>
               User Book List
             </Typography>
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="#"
-              startIcon={<Icon icon={plusFill} />}
-            > 
-              Refresh List
-            </Button>
           </Stack>
   
           <Card>
@@ -266,6 +265,20 @@ export default function UserList() {
               filterName={filterName}
               onFilterName={handleFilterByName}
             />
+
+
+            {(queryResult.length == 0) ? 
+
+
+            <Stack sx={{ width: '100%' }} spacing={2}>
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                List for User is Empty
+              </Alert>
+            </Stack>
+
+            :
+          
   
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
@@ -356,11 +369,12 @@ export default function UserList() {
                 </Table>
               </TableContainer>
             </Scrollbar>
+            }         
   
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={USERLIST.length}
+              count={queryResult.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

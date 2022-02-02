@@ -24,7 +24,8 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -88,6 +89,8 @@ export default function SearchView({inputString}) {
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
+  const [snackOpen, setSnackOpen] = useState(true);//Will be used to toggle whether or not the Snackbar gets shown
+
 
   useEffect(() =>{
     console.log("We are here in the SearchView with ", inputString);
@@ -180,6 +183,16 @@ export default function SearchView({inputString}) {
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
   };
+
+  const handleSnackClose = (event, reason) =>{
+    if (reason === 'clickaway'){
+      return;
+    }
+
+    setSnackOpen(false);
+  }
+
+
 
   const handleAdd = e =>{
     console.log("Adding books to the user list: ", selected);
@@ -385,6 +398,13 @@ export default function SearchView({inputString}) {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
+
+        <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleSnackClose} anchorOrigin={{vertical: 'top', horizontal: 'center' }}>
+          <Alert onClose={handleSnackClose} severity="success" sx={{ width: '100%' }}>
+            Book(s) successfully added to your list!
+          </Alert>
+      </Snackbar>
+
       </Container>
     </Page>
   }
@@ -393,10 +413,3 @@ export default function SearchView({inputString}) {
 }
 
 
-/*
-{filteredUsers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
-*/
