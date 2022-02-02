@@ -88,6 +88,7 @@ export default function UserList() {
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
+  const [searchingState, setSearchState] = useState(true);//Will tell us if we're fetching the list which we are in the beginning 
 
   useEffect(() =>{
     console.log("We are here in the User List");
@@ -113,6 +114,7 @@ export default function UserList() {
       const content = await response.json();
       console.log("This is the list for this current user: ", content.data);
       setResult(content.data);// Set the variable state
+      setSearchState(false);//Turn off the loading component
 
     }//Backend call to get the userlist for current user
 
@@ -238,7 +240,7 @@ export default function UserList() {
   return (
 
     <>
-      { (queryResult.length == 0) ?
+      { (searchingState == true)?
                               
       <Box sx={{ width: '100%' }}>
         <LinearProgress />
