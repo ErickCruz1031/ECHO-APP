@@ -24,6 +24,9 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+
 
 // components
 import Page from '../components/Page';
@@ -135,7 +138,7 @@ export default function UserList() {
      console.log("Called to mount the UserList")
      console.log("The user in UserList is the following: ", user)
      
-     if (queryResult.length == 0){
+     if (queryResult.length == 0 && searchingState == true){
       callAPI(); //Get the bearer token and then call backend call
      }
      
@@ -268,6 +271,20 @@ export default function UserList() {
               filterName={filterName}
               onFilterName={handleFilterByName}
             />
+
+
+            {(queryResult.length == 0) ? 
+
+
+            <Stack sx={{ width: '100%' }} spacing={2}>
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                List for User is Empty
+              </Alert>
+            </Stack>
+
+            :
+          
   
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
@@ -358,11 +375,12 @@ export default function UserList() {
                 </Table>
               </TableContainer>
             </Scrollbar>
+            }         
   
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={USERLIST.length}
+              count={queryResult.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
