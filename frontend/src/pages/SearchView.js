@@ -89,7 +89,7 @@ export default function SearchView({inputString}) {
   const [booksKey, setBooksKey] = useState("AIzaSyAd_ygAfqMtL2kbMXpsBd_9KPSxi_wwQn8");//Temporary only. Will store this in AWS Secrets manager
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
-  const [snackOpen, setSnackOpen] = useState(true);//Will be used to toggle whether or not the Snackbar gets shown
+  const [snackOpen, setSnackOpen] = useState(false);//Will be used to toggle whether or not the Snackbar gets shown
 
 
   useEffect(() =>{
@@ -226,7 +226,10 @@ export default function SearchView({inputString}) {
       });//Backend call to add the array of books into the MongoDB instance
 
       const data = await response.json();
-      console.log("This is the response: ", data);
+      console.log("The book(s) have been added to the list with this response ", data);
+      setSnackOpen(true);//Show the notification letting user know that the books have been added
+      setSelected([]);//After we add the books selected, we empty out the 'selected' array
+
 
     }
     addCall();//Call the backend to add objects to MongoDB 
