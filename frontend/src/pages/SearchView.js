@@ -90,6 +90,8 @@ export default function SearchView({inputString}) {
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
   const [snackOpen, setSnackOpen] = useState(false);//Will be used to toggle whether or not the Snackbar gets shown
+  const [warningOpen, setWarningOpen] = useState(false);//Will be used to toggle whether or not the Snackbar gets shown
+  const [errorOpen, setErrorOpen] = useState(false);//Will be used to toggle whether or not the Snackbar gets shown
 
 
   useEffect(() =>{
@@ -190,6 +192,8 @@ export default function SearchView({inputString}) {
     }
 
     setSnackOpen(false);
+    setWarningOpen(false);
+    setErrorOpen(false);
   }
 
 
@@ -227,9 +231,23 @@ export default function SearchView({inputString}) {
 
       const data = await response.json();
       console.log("The book(s) have been added to the list with this response ", data);
-      setSnackOpen(true);//Show the notification letting user know that the books have been added
+      //setSnackOpen(true);//Show the notification letting user know that the books have been added
       setSelected([]);//After we add the books selected, we empty out the 'selected' array
+      if(data.status == 200){
+        console.log("The status was 200");
+        setSnackOpen(true);
+      } else if (data.status == 100){
+        console.log("At least 2 of the book(s) was already in the user list");
+        setWarningOpen(true);
+      } else if (data.status == 500){
+        console.log("There was an error during the add request");
+        setErrorOpen(true);
 
+      } else{
+        console.log("Returned some other status not accounted for");
+      }
+
+    
 
     }
     addCall();//Call the backend to add objects to MongoDB 
@@ -405,6 +423,18 @@ export default function SearchView({inputString}) {
         <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleSnackClose} anchorOrigin={{vertical: 'top', horizontal: 'center' }}>
           <Alert onClose={handleSnackClose} severity="success" sx={{ width: '100%' }}>
             Book(s) successfully added to your list!
+          </Alert>
+      </Snackbar>
+
+      <Snackbar open={warningOpen} autoHideDuration={6000} onClose={handleSnackClose} anchorOrigin={{vertical: 'top', horizontal: 'center' }}>
+          <Alert onClose={handleSnackClose} severity="warning" sx={{ width: '100%' }}>
+            At least 1 of the book(s) was not added because it's already on your list!
+          </Alert>
+      </Snackbar>
+
+      <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleSnackClose} anchorOrigin={{vertical: 'top', horizontal: 'center' }}>
+          <Alert onClose={handleSnackClose} severity="error" sx={{ width: '100%' }}>
+            Error during the add request
           </Alert>
       </Snackbar>
 

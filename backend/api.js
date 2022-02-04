@@ -141,7 +141,9 @@ app.post('/addbook', function (req, res) {
           await client.connect();
           const database = client.db("eco");
           const userlist = database.collection("userlist");
-          // create a document to insert
+          var code = 200; //This will be the code that we send back to the frontend
+
+          //Create a document to insert
           for(const index in bookObject){
             console.log("Title for this one is ", bookObject[index].volumeInfo.title, "\n");
 
@@ -174,17 +176,19 @@ app.post('/addbook', function (req, res) {
 
             }
             else{
+                code = 100; //This will be the code that indicates whether or not one of the books was already in the user list
                 console.log("User already has a record matching this title, skipping!");
             }
           } //Loops iterates through books and adds each of them as a document
           res.setHeader('Content-Type', 'application/json');
-          res.json({status : "Books successfully added!"}); 
+          res.json({status : code, msg : "Books successfully added!"}); 
 
 
     
         } catch(err){
             console.log(err);
-            res.json({status : "There was an error with the add"}); 
+            code = 500; //Mark the response code as server side error
+            res.json({status : code, msg : "There was an error with the add"}); 
     
         }
     }
