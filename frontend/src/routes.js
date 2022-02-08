@@ -7,6 +7,7 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
+import BookDashboard from './pages/BookDashboard';
 import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
@@ -38,6 +39,7 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'search', element: <SearchView inputString={searchBook} /> },
         { path: 'userlist', element: <UserList /> },
+        { path: 'bookinfo', element: <BookDashboard /> },
         { path: 'blog', element: <Blog /> }
       ]
     },

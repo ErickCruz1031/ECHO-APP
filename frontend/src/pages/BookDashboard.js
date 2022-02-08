@@ -29,7 +29,7 @@ import SearchView from '../pages/SearchView';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardApp() {
+export default function BookDashboard() {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [username, setUsername] = useState("");//Variable for username

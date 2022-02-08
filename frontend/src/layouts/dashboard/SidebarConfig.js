@@ -28,6 +28,11 @@ const sidebarConfig = [
     icon: getIcon(shoppingBagFill)
   },
   {
+    title: 'Book Info',
+    path: '/dashboard/bookinfo',
+    icon: getIcon(fileTextFill)
+  },
+  {
     title: 'blog',
     path: '/dashboard/blog',
     icon: getIcon(fileTextFill)
