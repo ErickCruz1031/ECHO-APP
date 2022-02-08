@@ -12,3 +12,4 @@ export { default as AppWebsiteVisits } from './AppWebsiteVisits';
 export { default as AppWeeklySales } from './AppWeeklySales';
 export { default as CurrentBooks } from './CurrentBooks';
 export { default as AppReadingTimeline } from './AppReadingTimeline';
+export { default as AppBookReviews } from './AppBookReviews';

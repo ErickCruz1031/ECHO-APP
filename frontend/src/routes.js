@@ -7,6 +7,7 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
+import BookDashboard from './pages/BookDashboard';
 import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
@@ -19,6 +20,7 @@ import NotFound from './pages/Page404';
 export default function Router() {
 
   const [searchBook, setBook] = useState("None");
+  const [selectedBook, setSelected] = useState("dune")
 
   useState(() =>{
     console.log("This is the value in ROUTER: ", searchBook);
@@ -38,6 +40,7 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'search', element: <SearchView inputString={searchBook} /> },
         { path: 'userlist', element: <UserList /> },
+        { path: 'bookinfo', element: <BookDashboard selected={selectedBook}/> },
         { path: 'blog', element: <Blog /> }
       ]
     },
