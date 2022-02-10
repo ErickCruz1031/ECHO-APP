@@ -68,11 +68,6 @@ export default function BookDashboard({selected}) {
             <AppBookReviews bookName={selected}/>
           </Grid>
 
-
-          <Grid item xs={12} md={6} lg={8}>
-            <Profile />
-          </Grid>
-
           <Grid item xs={12} md={6} lg={8}>
             <LoginButton />
             <Typography variant="h4">This is the value {isAuthenticated}</Typography>
