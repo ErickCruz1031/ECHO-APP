@@ -57,6 +57,37 @@ function BookItem({ book }) {
   );
 }
 
+function ReviewItem({ reviewObj }) {
+  const { summary, pubDate, byline, url} = reviewObj; //Extract this information from object
+  //const { book_image, title, description, updated_date , author} = book;
+  var book_image = "";//Will need to figure out what to make this
+
+  return (
+    <Stack direction="row" alignItems="center" spacing={2}>
+      <Box
+        component="img"
+        alt={byline}
+        src={book_image}
+        sx={{ width: 48, height: 48, borderRadius: 1.5 }}
+      />
+      <Box sx={{ minWidth: 240 }}>
+        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
+          <Typography variant="subtitle2" noWrap>
+            {byline}
+          </Typography>
+        </Link>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+          {summary}
+        </Typography>
+      </Box>
+      <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
+        {/* {formatDistance(updated_date, new Date())}*/}
+        {pubDate}
+      </Typography>
+    </Stack>
+  );
+}
+
 //TODO: Pull the book list from the props. For now, we'll use the NEWS array as the inputs
 //const AppBookSeachList = () => {
 export default function AppBookReviews({bookName}) {
@@ -88,19 +119,20 @@ export default function AppBookReviews({bookName}) {
       console.log("The NYT query in this component is ", query);
       const res = await fetch(query);
       const data = await res.json();
-      console.log("This is the data from the NYT API:\n ", data);
+      console.log("This is the REVIEW from the NYT API:\n ", data);
       //setReviews(data.results.lists); 
+      setList(data.results);
       setResult(data.results);//For now so we can test
       console.log("Loaded the information from NYT. Moving forward...")
     };
 
-    if (reviews.length == 0)
+    if (currentList.length == 0)
     {
       callNYT();//Call the function to call NYTAPI
     }//Only call the API if the review list is empty
 
 
-  },[currentList]);
+  },[]);
 
   const changePage = e => {
     e.preventDefault();
@@ -122,12 +154,13 @@ export default function AppBookReviews({bookName}) {
 
   return (
     <Card>
-      <CardHeader title= {`New York Times: BOOK TITLE List`} />
+      <CardHeader title= {bookName} />
+
 
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
           {currentList.map((item) => (
-            <BookItem key={item.title} book={item} />
+            <ReviewItem key={item.title} reviewObj={item} />
           ))}
         </Stack>
       </Scrollbar>
@@ -153,43 +186,9 @@ export default function AppBookReviews({bookName}) {
 //export default AppBookSeachList;
 
 /*
-      <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-          {NEWS.map((news) => (
-            <BookItem key={news.title} news={news} />
+          {currentList.map((item) => (
+            <BookItem key={item.title} book={item} />
           ))}
-        </Stack>
-      </Scrollbar>
-
-
-
-
-      function BookItem({ news }) {
-  const { image, title, description, postedAt } = news;
-
-  return (
-    <Stack direction="row" alignItems="center" spacing={2}>
-      <Box
-        component="img"
-        alt={title}
-        src={image}
-        sx={{ width: 48, height: 48, borderRadius: 1.5 }}
-      />
-      <Box sx={{ minWidth: 240 }}>
-        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
-          <Typography variant="subtitle2" noWrap>
-            {title}
-          </Typography>
-        </Link>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-          {description}
-        </Typography>
-      </Box>
-      <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-        {formatDistance(postedAt, new Date())}
-      </Typography>
-    </Stack>
-  );
-}
 
 */

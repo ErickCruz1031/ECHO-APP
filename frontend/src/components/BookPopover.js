@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Popover } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 
-
 // ----------------------------------------------------------------------
 
 const ArrowStyle = styled('span')(({ theme }) => ({
@@ -25,12 +24,12 @@ const ArrowStyle = styled('span')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-MenuPopover.propTypes = {
+BookPopover.propTypes = {
   children: PropTypes.node.isRequired,
   sx: PropTypes.object
 };
 
-export default function MenuPopover({ children, sx, ...other }) {
+export default function BookPopover({ children, sx, ...other }) {
   return (
     <Popover
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
