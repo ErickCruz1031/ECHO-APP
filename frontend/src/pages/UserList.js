@@ -6,6 +6,7 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
+  Divider,
   Card,
   Table,
   Stack,
@@ -16,6 +17,7 @@ import {
   TableBody,
   TableCell,
   Container,
+  MenuItem,
   Typography,
   TableContainer,
   TablePagination,
@@ -49,6 +51,26 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Currently Reading?', alignRight: false },
   { id: '' }
 ];
+
+// ----------------------------------------------------------------------
+
+const MENU_OPTIONS = [
+  {
+    label: 'Update Progress',
+    icon: 'homeFill',
+    linkTo: '/'
+  },
+  {
+    label: 'Finished?',
+    icon: 'personFill',
+    linkTo: '#'
+  }
+];
+
+
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +115,9 @@ export default function UserList() {
   const [queryResult, setResult] = useState([]);//This is where we will store the results from the Google API
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
   const [searchingState, setSearchState] = useState(true);//Will tell us if we're fetching the list which we are in the beginning 
+  const [popOverOpen, setPopoverOpen] = useState([]);//This will contain the IDs of the items whose popover should be open ; should not exceed 1
+
+
 
   useEffect(() =>{
     console.log("We are here in the User List");
@@ -237,6 +262,42 @@ export default function UserList() {
 
   }//Function to handle the refresh 
 
+  const rowClick = (e, name) => {
+    console.log("Clicked one of the Table Rows with the following title: ", name)
+
+    const currentIndex = popOverOpen.indexOf(name);
+    let newOpen = [];
+    //event.target.checked = true;
+    console.log("Selected with these parameters: ", e, " ", name);
+    //return;
+    
+    if (currentIndex === -1) {
+      newOpen = newOpen.concat(popOverOpen, name);
+    } else if (currentIndex === 0) {
+      newOpen = newOpen.concat(popOverOpen.slice(1));
+    } else if (currentIndex === popOverOpen.length - 1) {
+      newOpen = newOpen.concat(popOverOpen.slice(0, -1));
+    } else if (currentIndex > 0) {
+      newOpen = newOpen.concat(
+        popOverOpen.slice(0, currentIndex),
+        popOverOpen.slice(currentIndex + 1)
+      );
+    }
+
+    console.log("This is the new selected ", newOpen);
+    setPopoverOpen(newOpen);
+  }
+
+  const handlePopoverClose = e => {
+    console.log("Closing the popover");
+  }
+
+  const popoverAction = (e, action) => {
+
+    console.log("Called the function wit ", e, " and ", action);
+
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - queryResult.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -310,16 +371,66 @@ export default function UserList() {
                         console.log("MAPPING THE USERLIST OBJECTS RIGHT NOW");
 
                         const isItemSelected = selected.indexOf(title) !== -1;
+                        const isPopoverOpen = popOverOpen.indexOf(title) !== -1;
+                        //const isPopoverOpen = true; //This will be true once the rest of the items are finished
   
                         return (
                           <TableRow
                             hover
                             key={marker}
+                            onClick={(event) => rowClick(event, title)}
                             tabIndex={-1}
                             role="checkbox"
                             selected={isItemSelected}
                             aria-checked={isItemSelected}
                           >
+
+                          <BookPopover
+                            open={isPopoverOpen}
+                            onClose={handlePopoverClose}
+                            sx={{ width: 220 }}
+                          >
+                            <Box sx={{ my: 1.5, px: 2.5 }}>
+                              <Typography variant="subtitle1" noWrap>
+                                Change Progress
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                                Finished?
+                              </Typography>
+                            </Box>
+
+                            <Divider sx={{ my: 1 }} />
+
+                              {MENU_OPTIONS.map((option) => (
+                                <MenuItem
+                                  key={option.label}
+                                  to={option.linkTo}
+                                  component={RouterLink}
+                                  onClick={popoverAction}
+                                  sx={{ typography: 'body2', py: 1, px: 2.5 }}
+                                >
+                                  <Box
+                                    component={Icon}
+                                    icon={option.icon}
+                                    sx={{
+                                      mr: 2,
+                                      width: 24,
+                                      height: 24
+                                    }}
+                                  />
+
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+
+                              <Box sx={{ p: 2, pt: 1.5 }}>
+                                <Button fullWidth color="inherit" variant="outlined">
+                                  Logout
+                                </Button>
+                              </Box>
+                          </BookPopover>
+
+
                             <TableCell padding="checkbox">
                               <Checkbox
                                 checked={isItemSelected}
