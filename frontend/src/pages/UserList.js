@@ -285,7 +285,7 @@ export default function UserList() {
     }
 
     console.log("This is the new selected ", newOpen);
-    setSelected(newOpen);
+    setPopoverOpen(newOpen);
   }
 
   const handlePopoverClose = e => {
@@ -371,8 +371,8 @@ export default function UserList() {
                         console.log("MAPPING THE USERLIST OBJECTS RIGHT NOW");
 
                         const isItemSelected = selected.indexOf(title) !== -1;
-                        //const isPopoverOpen = popOverOpen.indexOf(title) !== -1;
-                        const isPopoverOpen = false; //This will be true once the rest of the items are finished
+                        const isPopoverOpen = popOverOpen.indexOf(title) !== -1;
+                        //const isPopoverOpen = true; //This will be true once the rest of the items are finished
   
                         return (
                           <TableRow
