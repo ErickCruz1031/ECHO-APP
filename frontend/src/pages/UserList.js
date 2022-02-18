@@ -1,7 +1,7 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState, useEffect,useLocation } from 'react';
+import { useState, useEffect,useLocation, useRef } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -116,7 +116,7 @@ export default function UserList() {
   const [bearerToken, setBearer] = useState("");//Bearer token that will be used for backend calls
   const [searchingState, setSearchState] = useState(true);//Will tell us if we're fetching the list which we are in the beginning 
   const [popOverOpen, setPopoverOpen] = useState([]);//This will contain the IDs of the items whose popover should be open ; should not exceed 1
-
+  const anchorRef = useRef(null);
 
 
   useEffect(() =>{
@@ -353,6 +353,7 @@ export default function UserList() {
                     numSelected={selected.length}
                     onRequestSort={handleRequestSort}
                     onSelectAllClick={handleSelectAllClick}
+                    ref={anchorRef}
                   />
                   <TableBody>
                     {queryResult
@@ -388,6 +389,7 @@ export default function UserList() {
                           <BookPopover
                             open={isPopoverOpen}
                             onClose={handlePopoverClose}
+                            anchorEl={anchorRef.current}
                             sx={{ width: 220 }}
                           >
                             <Box sx={{ my: 1.5, px: 2.5 }}>
