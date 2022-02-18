@@ -386,52 +386,6 @@ export default function UserList() {
                             aria-checked={isItemSelected}
                           >
 
-                          <BookPopover
-                            open={isPopoverOpen}
-                            onClose={handlePopoverClose}
-                            anchorEl={anchorRef.current}
-                            sx={{ width: 220 }}
-                          >
-                            <Box sx={{ my: 1.5, px: 2.5 }}>
-                              <Typography variant="subtitle1" noWrap>
-                                Change Progress
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                                Finished?
-                              </Typography>
-                            </Box>
-
-                            <Divider sx={{ my: 1 }} />
-
-                              {MENU_OPTIONS.map((option) => (
-                                <MenuItem
-                                  key={option.label}
-                                  to={option.linkTo}
-                                  component={RouterLink}
-                                  onClick={popoverAction}
-                                  sx={{ typography: 'body2', py: 1, px: 2.5 }}
-                                >
-                                  <Box
-                                    component={Icon}
-                                    icon={option.icon}
-                                    sx={{
-                                      mr: 2,
-                                      width: 24,
-                                      height: 24
-                                    }}
-                                  />
-
-                                  {option.label}
-                                </MenuItem>
-                              ))}
-
-                              <Box sx={{ p: 2, pt: 1.5 }}>
-                                <Button fullWidth color="inherit" variant="outlined">
-                                  Logout
-                                </Button>
-                              </Box>
-                          </BookPopover>
-
 
                             <TableCell padding="checkbox">
                               <Checkbox
