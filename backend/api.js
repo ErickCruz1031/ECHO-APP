@@ -167,10 +167,12 @@ app.post('/addbook', function (req, res) {
                     date_added: bookObject[index].volumeInfo.publishedDate,
                     category: bookObject[index].volumeInfo.categories,
                     thumbnail: thumbnailURL,
-                    currently_reading: "No",
+                    currently_reading: "N",
+                    date_started: "",
                     username: user
             
                 }
+                //Added the date_started and curretly reading fields to the object
                 const result = await userlist.insertOne(book);
                 console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
@@ -210,8 +212,9 @@ app.post('/removebook', function(req, res){
           await client.connect();
           const database = client.db("eco");
           const collection = database.collection("userlist");
-          // Query for a movie that has title "Annie Hall"
-          const delete_Obj = new ObjectId(req.body.id);//Make an id object with the if passed from the frontend
+
+          // Query for a movie that matches the username and the ObjectID of the one sent from frontend
+          const update_Obj = new ObjectId(req.body.id);//Make an id object with the if passed from the frontend
           const query = { _id : delete_Obj}; //Search for the object with a matching ID
           const queryTwo = {username: req.body.username};//Going to query a second time to get the updated list of books for user
 
@@ -263,6 +266,59 @@ app.post('/removebook', function(req, res){
 
         To use to search for ID
       */
+});
+
+
+app.post('/startbook', function(req, res){
+
+    console.log("Starting to read book with the following title: ", req.body);
+    //res.json({message : "Returning from Delete"})
+    async function updateStart() {
+        try {
+          await client.connect();
+          const database = client.db("eco");
+          const collection = database.collection("userlist");
+          const update_Obj = new ObjectId(req.body.id);//Make an id object with the if passed from the frontend
+          const filter = {username: req.body.username, _id : update_Obj} //Filter the objects for this user with the matching ObjectID
+          const queryTwo = {username: req.body.username};//Going to query a second time to get the updated list of books for user
+
+          const options = { upsert: false }; //If the object doesn't exists we want to throw an error, not create it 
+          
+          //Update the curretly_reading status and the date started to today's date
+          const updateDoc = {
+            $set: {
+              currently_reading: `Y`,
+              date_started: `${Date()}`
+            },
+          };
+
+
+          const result = await collection.updateOne(filter, updateDoc, options);
+          
+          console.log(
+            `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+          );
+          //Now we return the updated list of user books
+          const cursor = collection.find(queryTwo);
+          //Print a message if no documents were found
+          if ((await cursor.count()) === 0) {
+            console.log("No documents found!");
+          }
+          var sendObj = []
+          await cursor.forEach(function(obj){
+            console.log("This is one of the items returned: ", obj, "\n\n\n\n");
+            sendObj.push(obj);
+          });  
+          //res.json({data: sendObj});
+          res.json({status : "Successfully updated one document.", data: sendObj});
+          
+        } catch(err){
+            console.log(err); 
+            res.json({status : "The update for the document ended up in an error"})
+
+        }
+      }
+      updateStart();
 });
 
 app.listen(port);
